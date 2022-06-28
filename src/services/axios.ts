@@ -1,7 +1,6 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios';
+import { config } from '../config/config';
 
-const instance = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
-})
+const instance: AxiosInstance = axios.create({ baseURL: config.apiEndpoint });
 
-export default instance
+export default instance;
