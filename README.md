@@ -28,6 +28,8 @@ The order would be as following:
 
 <img width="550" alt="Screen Shot 2022-05-10 at 13 25 54" src="https://user-images.githubusercontent.com/37369221/167680948-23b7a12f-70d9-4708-999a-088315a854b8.png">
 
+* Apart from that, we always need to put together imports from the same folder, and the same with imports with similar with paths. For instance, in this example, all imports from the `store` folder should be together, and the same should be done with the other folders like `components`, `assets`, etc.
+
 * We can even go one step further and create, for example, an `index.tsx` file in the `components` folder so that we can export all of them together and then we are able to import the components that we need together in the same line:
 
 <img width="550" alt="Screen Shot 2022-05-10 at 13 51 57" src="https://user-images.githubusercontent.com/37369221/167681684-9b399917-6b5c-4d08-9ad1-74602a98dab2.png">
