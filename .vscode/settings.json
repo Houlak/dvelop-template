@@ -1,0 +1,15 @@
+{
+  "editor.tabSize": 2,
+  "editor.useTabStops": false,
+  "editor.codeActionsOnSave": { "source.organizeImports": true },
+  "[html]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[xml]": { "editor.tabSize": 2 },
+  "[json]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "javascript.preferences.importModuleSpecifierEnding": "minimal",
+  "[typescript]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+  "[typescriptreact]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" }
+}

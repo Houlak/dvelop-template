@@ -1,5 +1,5 @@
-import { Route, Routes } from 'react-router-dom'
-import Landing from './Landing/Landing'
+import { Route, Routes } from 'react-router-dom';
+import Landing from './Landing/Landing';
 
 function Main() {
   return (
@@ -10,7 +10,7 @@ function Main() {
         </Routes>
       </div>
     </div>
-  )
+  );
 }
 
-export default Main
+export default Main;
