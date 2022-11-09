@@ -1,5 +1,9 @@
 customHeaders:
   - pattern: 'index.html'
     headers:
-    - key: 'Cache-Control'
-      value: 'no-store, max-age=0'
+      - key: 'Cache-Control'
+        value: 'no-store, max-age=0'
+  - pattern: '*.wasm'
+    headers:
+      - key: 'Content-Type'
+        value: 'application/wasm'
