@@ -7,3 +7,7 @@ customHeaders:
     headers:
       - key: 'Content-Type'
         value: 'application/wasm'
+  - pattern: '**'
+    headers:
+      - key: 'Server'
+        value: ''
