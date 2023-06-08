@@ -1,5 +1,5 @@
 export const config = {
-  env: process.env.VITE_ENV_NAME,
-  backendUrl: process.env.VITE_BACKEND_URL,
-  publicUrl: process.env.PUBLIC_URL,
+  env: import.meta.env.VITE_ENV_NAME,
+  backendUrl: import.meta.env.VITE_BACKEND_URL,
+  publicUrl: import.meta.env.PUBLIC_URL,
 };
