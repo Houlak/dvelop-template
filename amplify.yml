@@ -6,9 +6,10 @@ frontend:
         - yarn install
     build:
       commands:
-        - if [ "${AWS_BRANCH}" = "main" ]; then yarn run build:prod; fi
-        - if [ "${AWS_BRANCH}" = "qa" ]; then yarn run build:qa; fi
-        - if [ "${AWS_BRANCH}" = "dev" ]; then yarn run build:dev; fi
+        - if [ "${AWS_BRANCH}" = "main" ]; then yarn run build:prod;
+          elif [ "${AWS_BRANCH}" = "qa" ]; then yarn run build:qa;
+          elif [ "${AWS_BRANCH}" = "dev" ]; then yarn run build:dev;
+          else yarn run build:dev; fi;
   artifacts:
     baseDirectory: build
     files:
