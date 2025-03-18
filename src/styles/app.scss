@@ -1,5 +1,4 @@
-@import './variables';
-@import '../screens/Landing/landing';
+@use './variables' as *;
 
 body {
   margin: 0;
