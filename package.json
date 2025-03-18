@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "env-cmd -e local vite",
+    "dev": "env-cmd -e local vite",
     "build": "vite build",
     "build:dev": "env-cmd -e dev npm run build",
     "build:qa": "env-cmd -e qa npm run build",
