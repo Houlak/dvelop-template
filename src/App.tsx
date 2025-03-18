@@ -1,11 +1,11 @@
-import { BrowserRouter } from 'react-router-dom';
-import Main from './screens/Main';
+import { BrowserRouter, RouterProvider } from 'react-router-dom';
+import getRoutes from './routes/routes';
 import './styles/app.scss';
 
 function App() {
   return (
     <BrowserRouter>
-      <Main />
+      <RouterProvider router={getRoutes()} />
     </BrowserRouter>
   );
 }
