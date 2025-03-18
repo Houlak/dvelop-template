@@ -10,6 +10,7 @@
     "build:prod": "GENERATE_SOURCEMAP=false env-cmd -e prod npm run build"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.17.15",
     "axios": "^1.8.2",
     "env-cmd": "^10.1.0",
     "react": "^18.2.0",

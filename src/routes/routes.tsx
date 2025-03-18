@@ -1,8 +1,9 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { createBrowserRouter } from 'react-router-dom';
 import Landing from '../screens/Landing/Landing';
 import Root from './Root';
 
-const getRoutes = () =>
+const getRoutes = (queryClient: QueryClient) =>
   createBrowserRouter([
     {
       path: '/',
