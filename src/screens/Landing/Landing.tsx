@@ -1,4 +1,5 @@
 import logo from '../../assets/logo.png';
+import './_landing.scss';
 
 function Landing() {
   return (
