@@ -1,87 +1,117 @@
-// Modern CSS reset: https://github.com/hankchizljaw/modern-css-reset
+/* Inspiration: 
+- Elly Loel's reset https://gist.github.com/EllyLoel/4ff8a6472247e6dd2315fd4038926522 
+- Kevin Powell resets
+*/
 
-/* Box sizing rules */
+:root {
+  --scroll-padding-top: 3rem;
+  --text-max-size: 65ch;
+}
+
+* {
+  /* Remove default margin on everything */
+  margin: 0;
+  /* Remove default padding on everything */
+  padding: 0;
+  /* Calc `em` based line height, bigger line height for smaller font size and smaller line height for bigger font size: https://kittygiraudel.com/2020/05/18/using-calc-to-figure-out-optimal-line-height/ */
+  line-height: calc(0.25rem + 1em + 0.25rem);
+}
+
+/* Use a more-intuitive box-sizing model on everything */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Remove default padding */
-ul,
-ol {
-  padding: 0;
-}
-
-/* Remove default margin */
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-ul,
-ol,
-figure,
-blockquote,
-dl,
-dd {
-  margin: 0;
-}
-
-/* Set core root defaults */
 html {
-  scroll-behavior: smooth;
+  /* dark mode user-agent-styles */
+  color-scheme: dark light;
+  /* Making sure text size is only controlled by font-size */
+  -webkit-text-size-adjust: none;
 }
 
-/* Set core body defaults */
+@media (prefers-reduced-motion: no-preference) {
+  html:focus-within {
+    /* Smooth scrolling for users that don't prefer reduced motion */
+    scroll-behavior: smooth;
+    /* Adds padding-top to separate from top and sticky headers */
+    scroll-padding-top: var(--scroll-padding-top, 3rem);
+  }
+}
+
 body {
-  min-height: 100vh;
+  /* https://marco.org/2012/11/15/text-rendering-optimize-legibility */
   text-rendering: optimizeSpeed;
-  line-height: 1.5;
+  /* Default min height with fallbacks */
+  min-height: 100vh;
+  min-block-size: 100vb;
+  min-block-size: 100svb;
 }
 
-/* Remove list styles on ul, ol elements with a class attribute */
-ul[class],
-ol[class] {
+/* Improve media defaults */
+:where(img, svg, video, canvas, audio, iframe, embed, object) {
+  display: block;
+}
+:where(img, svg, video) {
+  block-size: auto;
+  max-inline-size: 100%;
+}
+
+/* Remove built-in form typography styles */
+:where(input, button, textarea, select),
+:where(input[type='file'])::-webkit-file-upload-button {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+/* Position list marker inside */
+:where(ul, ol) {
+  list-style-position: inside;
+}
+
+/* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+:where(ul, ol)[role='list'] {
   list-style: none;
 }
 
-/* A elements that don't have a class get default styles */
-a:not([class]) {
-  text-decoration-skip-ink: auto;
+/* Animate focus outline */
+@media (prefers-reduced-motion: no-preference) {
+  :focus-visible {
+    transition: outline-offset 145ms cubic-bezier(0.25, 0, 0.4, 1);
+  }
+  :where(:not(:active)):focus-visible {
+    transition-duration: 0.25s;
+  }
+}
+:where(:not(:active)):focus-visible {
+  outline-offset: 5px;
 }
 
-/* Make images easier to work with */
-img,
-picture {
-  max-width: 100%;
-  display: block;
+/* Text readability */
+:where(h1, h2, h3, h4, h5, h6) {
+  /* Balance headings across multiple lines into an even block */
+  text-wrap: balance;
 }
-
-/* Natural flow and rhythm in articles by default */
-article > * + * {
-  margin-top: 1em;
+:where(p, li, figcaption) {
+  /* Prevent text orphans (single words on last line) */
+  text-wrap: pretty;
+  /* Shorter text line breaks to reduce eye-shifting stress */
+  max-inline-size: var(--text-max-size, 65ch);
 }
-
-/* Inherit fonts for inputs and buttons */
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-
-/* Blur images when they have no alt attribute */
-img:not([alt]) {
-  filter: blur(10px);
+:where(p, h1, h2, h3, h4, h5, h6) {
+  /* Avoid text overflows */
+  overflow-wrap: break-word;
 }
 
 /* Remove all animations and transitions for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

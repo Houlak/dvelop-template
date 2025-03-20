@@ -7,6 +7,7 @@ body {
 
 [id='root'] {
   min-height: inherit;
+  min-block-size: inherit;
   display: flex;
   flex-direction: column;
 }
