@@ -16,3 +16,4 @@ export interface ApiResponse<T = unknown> {
 type MessageLanguage = 'EN' | 'ES';
 
 type ShowMessage = Record<MessageLanguage, string>;
+

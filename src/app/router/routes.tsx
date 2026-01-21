@@ -1,6 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { createBrowserRouter } from 'react-router-dom';
-import Landing from '../pages/Landing';
+import HomePage from '../../pages/HomePage/HomePage';
 import Root from './Root';
 
 const getRoutes = (queryClient: QueryClient) =>
@@ -8,8 +8,9 @@ const getRoutes = (queryClient: QueryClient) =>
     {
       path: '/',
       element: <Root />,
-      children: [{ index: true, element: <Landing /> }],
+      children: [{ index: true, element: <HomePage /> }],
     },
   ]);
 
 export default getRoutes;
+

@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { config } from '../config/config';
-import { ApiResponse } from '../types/response/api.response';
+import { config } from '../../../app/config/env';
+import { ApiResponse } from '../../types/api.types';
 
 const instance: AxiosInstance = axios.create({
   baseURL: config.backendUrl,
@@ -37,3 +37,4 @@ const onRejectedApiResponse = (error: AxiosError<ApiResponse>) => {
 instance.interceptors.response.use((response) => response, onRejectedApiResponse);
 
 export default instance;
+

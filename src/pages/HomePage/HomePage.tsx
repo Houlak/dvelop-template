@@ -1,6 +1,6 @@
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
-function Landing() {
+function HomePage() {
   return (
     <main className="min-h-[inherit] min-[block-size:inherit] grid place-content-center">
       <img 
@@ -26,4 +26,5 @@ function Landing() {
   );
 }
 
-export default Landing;
+export default HomePage;
+
