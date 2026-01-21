@@ -148,8 +148,27 @@ src/
 │       └── variables.css
 │
 ├── pages/                        # Page-level components (route entry points)
-│   ├── HomePage/
-│   │   └── HomePage.tsx
+│   ├── HomePage/                 # Example: Expanded page structure (as it grows)
+│   │   ├── HomePage.tsx          # Main page component
+│   │   ├── HomePage.test.tsx     # Page-specific tests
+│   │   ├── components/           # Page-specific components (used only on this page)
+│   │   │   ├── HeroSection/
+│   │   │   │   ├── HeroSection.tsx
+│   │   │   │   └── HeroSection.test.tsx
+│   │   │   ├── FeaturedProducts/
+│   │   │   │   ├── FeaturedProducts.tsx
+│   │   │   │   └── FeaturedProducts.test.tsx
+│   │   │   └── NewsletterSignup/
+│   │   │       ├── NewsletterSignup.tsx
+│   │   │       └── NewsletterSignup.test.tsx
+│   │   ├── hooks/                # Page-specific hooks
+│   │   │   └── useHomePageData.ts
+│   │   ├── utils/                # Page-specific utilities
+│   │   │   └── homePage.helpers.ts
+│   │   ├── types/                # Page-specific types (if not used elsewhere)
+│   │   │   └── homePage.types.ts
+│   │   └── constants/            # Page-specific constants
+│   │       └── homePage.constants.ts
 │   ├── LoginPage/
 │   ├── DashboardPage/
 │   └── NotFoundPage/
