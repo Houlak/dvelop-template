@@ -1,51 +1,261 @@
-# React frontend template
+# React Frontend Template
 
-React template for web frontend projects
+A production-ready React template built with TypeScript, React Router, TanStack Query, and feature-based architecture.
 
-## Notes
+## 🏗️ Architecture Principles
 
-- Always try to avoid having warnings.
-- Try to avoid usage of plain CSS, please try to use SASS instead.
+This template follows a **feature-based architecture** with clear separation of concerns. See [STRUCTURE.md](./STRUCTURE.md) for the complete folder structure.
 
-## Imports order
+### Why These Core Principles?
 
-We try to import all used libraries, functions, etc. on the top of the files, and in a certain order, so it is easier to browse dependencies. The order should be as following:
+#### 1. **Feature-Based Organization**
+- **What**: Group code by business domain (e.g., `auth/`, `users/`, `products/`)
+- **Why**: As your app grows, features are easier to locate, modify, and remove. New developers can understand one feature at a time without navigating the entire codebase.
 
-- First we import all necessary things from third party libraries sorted alphabetically.
-- Immediately in the next line we import all the necessary things from our project. Remember that we do not leave a line between "external" and "internal" imports.
-- We order our "internal" imports following this criteria: from “more far away” to “less far away”, so in the next example, the import from `../utils/routes` comes before `./Auth/Login`.
-- Apart from that, we always need to put together imports from the same folder, and the same with imports with similar paths. For instance, in this example, all imports from the `store` folder should be together, and the same should be done with the other folders like `components`, `assets`, etc.
+#### 2. **Separation of Concerns**
+- **What**: Each layer has a clear responsibility (API, components, hooks, state)
+- **Why**: Changes in one layer don't cascade through the app. You can swap your API client, UI library, or state management without touching business logic.
 
-All of these rules can be automatically applied in VS Code by clicking with the second button in the file code, then clicking `Source Action...` and finally `Sort Imports`.
+#### 3. **Reusability Through `shared/`**
+- **What**: Common components, hooks, and utilities live in `shared/`
+- **Why**: Prevents code duplication and ensures consistency. Update a Button component once, it reflects everywhere.
 
-**Example: here we can see our criteria being applyed.**
+#### 4. **Scalability**
+- **What**: Add new features by creating new folders, not refactoring existing code
+- **Why**: Teams can work in parallel on different features without merge conflicts. Onboarding is faster when structure is predictable.
 
-- Before:
+#### 5. **Co-located Tests**
+- **What**: Tests live next to the code they test (`Component.tsx` → `Component.test.tsx`)
+- **Why**: When you modify code, the test is right there. Reduces context switching and makes TDD natural.
 
-<img width="550" alt="Before imports order criteria being applyed" src="https://user-images.githubusercontent.com/37369221/194677882-6b87fac9-e207-4bf2-8165-7518d101100a.png">
+#### 6. **No Barrel Files**
+- **What**: Import directly from source files, not from `index.ts` re-exports
+- **Why**: Better tree-shaking, clearer dependencies, and no circular import issues. Your IDE can navigate to the actual file instantly.
 
-<img width="170" alt="Source Action..." src="https://user-images.githubusercontent.com/37369221/194677891-88aae041-d61b-48cf-961f-548b6e42282b.png"> <img width="220" alt="Sort Imports" src="https://user-images.githubusercontent.com/37369221/194677898-f127d26c-a19c-4c4d-ac1c-b2f263efc0b3.png">
+---
 
-- After:
+## 🛣️ Routing System
 
-<img width="550" alt="After imports order criteria being applyed" src="https://user-images.githubusercontent.com/37369221/194677970-807a2408-c4d9-4133-8ac8-db93692d847f.png">
+We use **React Router v6** with **loaders** and **TanStack Query** for data management.
 
-But this is not even necessary. If in the `.vscode/settings.json` file we have this configuration inside, the imports will sort automatically whenever we save that file:
+### How It Works
 
+```typescript
+// src/app/router/routes.tsx
+const getRoutes = (queryClient: QueryClient) =>
+  createBrowserRouter([
+    {
+      path: '/',
+      element: <Root />,
+      children: [
+        {
+          element: <ProtectedLayout />,
+          loader: requireAuthLoader,  // ← Auth check happens here
+          children: [
+            {
+              index: true,
+              element: <HomePage />,
+              loader: homePageLoader(queryClient),  // ← Data prefetch
+            },
+          ],
+        },
+      ],
+    },
+  ]);
 ```
-  "editor.codeActionsOnSave": { "source.organizeImports": true }
+
+**Flow**:
+1. User navigates to `/`
+2. `requireAuthLoader` runs → checks authentication, redirects if needed
+3. `homePageLoader` runs → prefetches data
+4. `<HomePage />` renders with data already available
+
+---
+
+## 🔄 Why Use Loaders?
+
+**Loaders** run before a route renders and can prefetch data or perform checks.
+
+```typescript
+// src/pages/HomePage/HomePage.loader.ts
+export const homePageLoader = (queryClient: QueryClient) => {
+  return async ({ request, params }) => {
+    const response = await queryClient.ensureQueryData({
+      queryKey: ['homePageData'],
+      queryFn: async () => fetchData(),
+    });
+    return response;
+  };
+};
 ```
 
-### Going one step further...
+### Benefits:
+- **No loading spinners**: Data is ready before the page renders
+- **Auth guards**: Redirect unauthenticated users before they see protected content
+- **Better UX**: Users see complete content immediately, not skeletons
+- **SSR-ready**: Loaders can run on the server for true SSR/SSG
 
-We can even go one step further and create, for example, an `index.tsx` file in the components folder so that we can export all of them together and then we are able to import the components that we need together in the same line:
+---
 
-- Before:
+## 🔍 Why Use Queries (TanStack Query)?
 
-<img width="800" alt="Going one step further... Before" src="https://user-images.githubusercontent.com/37369221/194678089-a9581525-fc6e-4436-afa4-42de5c10d31e.png">
+**Queries** handle data fetching with automatic caching, refetching, and state management.
 
-- After:
+```typescript
+// In a component
+const { data, isLoading, error } = useQuery({
+  queryKey: ['users'],
+  queryFn: fetchUsers,
+});
+```
 
-<img width="800" alt="Going one step further... After 1" src="https://user-images.githubusercontent.com/37369221/194678093-5a5b5d9b-e82f-4145-990e-f04c64fa6c03.png">
+### Benefits:
+- **Automatic caching**: Fetch once, reuse everywhere
+- **Background refetching**: Keep data fresh without user interaction
+- **Deduplication**: Multiple components requesting the same data = one network request
+- **Built-in loading/error states**: No need to manage `useState` for every fetch
+- **Optimistic updates**: Update UI instantly, roll back on error
 
-<img width="500" alt="Going one step further... After 2" src="https://user-images.githubusercontent.com/37369221/194678097-78babf4e-6ec1-4399-8b4f-7fd5b3c8e45a.png">
+**When combined with loaders**: The loader prefetches, the query reads from cache. Instant render + always fresh data.
+
+---
+
+## ✍️ Why Use Mutations?
+
+**Mutations** handle data modifications (POST, PUT, DELETE) with side effects.
+
+```typescript
+// src/pages/HomePage/useHomePageMutation.ts
+export const useHomePageMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: FormData) => {
+      return await apiClient.post('/submit', data);
+    },
+    onSuccess: (data) => {
+      // Default success behavior
+      queryClient.invalidateQueries({ queryKey: ['relatedData'] });
+    },
+    onError: (error) => {
+      // Default error handling
+      console.error('Mutation error:', error);
+    },
+  });
+};
+```
+
+### Benefits:
+- **Automatic cache updates**: Invalidate or update related queries
+- **Loading states**: Track submission status without manual state
+- **Error handling**: Centralized error management
+- **Retry logic**: Built-in retry on failure
+
+---
+
+## 🎯 Mutation Hook Pattern: Override `onSuccess`/`onError`
+
+### The Pattern
+
+**Define mutations in hooks** with sensible defaults, then **override in components** for specific behaviors:
+
+```typescript
+// ✅ In hook: useHomePageMutation.ts
+export const useHomePageMutation = () => {
+  return useMutation({
+    mutationFn: submitForm,
+    onSuccess: (data) => {
+      // Default: Invalidate cache
+      queryClient.invalidateQueries({ queryKey: ['relatedData'] });
+    },
+    onError: (error) => {
+      // Default: Log error
+      console.error('Error:', error);
+    },
+  });
+};
+
+// ✅ In component: HomePage.tsx
+const mutation = useHomePageMutation();
+
+const onSubmit = (data: FormData) => {
+  mutation.mutate(data, {
+    onSuccess: () => {
+      // Override: Add component-specific behavior
+      reset();  // Clear form
+      navigate('/success');  // Navigate away
+      toast.success('Saved!');  // Show notification
+    },
+    onError: (error) => {
+      // Override: Show user-friendly error
+      setErrorMessage(error.message);
+    },
+  });
+};
+```
+
+### Benefits
+
+1. **Reusability**: The same mutation hook can be used in multiple components
+   ```typescript
+   // AdminPanel.tsx: Redirect to admin dashboard
+   mutation.mutate(data, { onSuccess: () => navigate('/admin') });
+   
+   // SettingsPage.tsx: Just show a toast
+   mutation.mutate(data, { onSuccess: () => toast('Updated!') });
+   ```
+
+2. **Sensible defaults**: Every mutation automatically updates the cache, even if you forget
+
+3. **Flexibility**: Each component can customize behavior without duplicating API logic
+
+4. **Testing**: Mock the mutation hook once, test component-specific behaviors separately
+
+5. **Single Source of Truth**: API endpoint and base logic defined once, used everywhere
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Install dependencies
+yarn install
+
+# Start dev server
+yarn dev
+
+# Run tests
+yarn test
+
+# Build for production
+yarn build
+```
+
+---
+
+## 📚 Tech Stack
+
+- **React 18** + **TypeScript**
+- **React Router v6** (with loaders)
+- **TanStack Query v5** (data fetching)
+- **React Hook Form** + **Yup** (form management)
+- **Vite** (build tool)
+- **Tailwind CSS** (styling)
+
+---
+
+## 🤝 Contributing
+
+1. Follow the folder structure in [STRUCTURE.md](./STRUCTURE.md)
+2. Import directly from source files (no `index.ts` barrels)
+3. Co-locate tests with components
+4. Use loaders for prefetching, queries for reading, mutations for writing
+5. Define mutations in hooks, customize in components
+
+---
+
+## 📖 Learn More
+
+- [React Router Loaders](https://reactrouter.com/en/main/route/loader)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Feature-Based Architecture](https://dev.to/profydev/screaming-architecture-evolution-of-a-react-folder-structure-4g25)
