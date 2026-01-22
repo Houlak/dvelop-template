@@ -1,12 +1,13 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { Button } from '../../../../shared/components/ui/Button/Button';
 import { FieldError, FieldGroup, FieldLabel } from '../../../../shared/components/ui/Field/Field';
 import { Input } from '../../../../shared/components/ui/Input/Input';
 
 const loginFormSchema = yup.object({
   email: yup.string().email('Invalid email address').required('Email is required'),
-  password: yup.string().min(6, (value) => `Password must be at least ${value} characters`).required('Password is required'),
+  password: yup.string().min(6, ({ min }) => `Password must be at least ${min} characters`).required('Password is required'),
 });
 
 export type LoginFormData = yup.InferType<typeof loginFormSchema>;
@@ -66,9 +67,12 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
             </FieldGroup>
           )}
         />
+        
       </div>
 
-      
+      <Button type="submit" disabled={isLoading || !isValid} className="w-full mt-4">
+        {isLoading ? 'Logging in...' : 'Login'}
+      </Button>
     </form>
   );
 }
