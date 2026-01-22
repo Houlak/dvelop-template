@@ -72,24 +72,77 @@ const getRoutes = (queryClient: QueryClient) =>
 
 ---
 
-## 🔄 Why Use Loaders?
+## 📦 Query Options Pattern: Centralized Query Definitions
 
-**Loaders** run before a route renders and can prefetch data or perform checks.
+The recommended pattern is to **centralize query definitions** using `queryOptions()` from TanStack Query. This ensures type safety and reusability across loaders and components.
+
+### File Structure
+
+```
+src/pages/HomePage/
+├── HomePage.tsx              # Component
+├── HomePage.loader.ts        # Route loader
+├── HomePage.queries.ts       # ← Query definitions (NEW)
+└── useHomePageMutation.ts    # Mutation hook
+```
+
+### Define Query Options Once
+
+```typescript
+// src/pages/HomePage/HomePage.queries.ts
+import { queryOptions } from '@tanstack/react-query';
+
+export type HomePageData = {
+  message: string;
+};
+
+export const homePageQueryKey = ['homePageData'] as const;
+
+export const homePageQueryOptions = queryOptions<HomePageData>({
+  queryKey: homePageQueryKey,
+  queryFn: async () => {
+    // Your API call here
+    return await apiClient.get('/home-data');
+  },
+});
+```
+
+### Benefits of Query Options
+
+1. **Type Safety**: Types are inferred automatically in both loaders and components
+2. **DRY**: Define queryKey and queryFn once, use everywhere
+3. **Consistency**: Same query logic in prefetching and client-side fetching
+4. **Easy Refactoring**: Change the API call in one place
+5. **Better Testing**: Mock the query options, not individual functions
+
+---
+
+## 🔄 Loaders: Prefetch with Query Options
+
+**Loaders** run before a route renders and prefetch data using the centralized query options.
 
 ```typescript
 // src/pages/HomePage/HomePage.loader.ts
+import { QueryClient } from '@tanstack/react-query';
+import { homePageQueryOptions, type HomePageData } from './HomePage.queries';
+
 export const homePageLoader = (queryClient: QueryClient) => {
-  return async ({ request, params }) => {
-    const response = await queryClient.ensureQueryData({
-      queryKey: ['homePageData'],
-      queryFn: async () => fetchData(),
-    });
+  return async ({ request, params }): Promise<HomePageData> => {
+    const response = await queryClient.ensureQueryData(homePageQueryOptions);
     return response;
   };
 };
 ```
 
-### Benefits:
+### `ensureQueryData` vs `fetchQuery`
+
+- **`ensureQueryData`**: Returns cached data if available, only fetches if missing or stale
+  - Use when you want to reuse cached data for better performance
+  
+- **`fetchQuery`**: Always fetches fresh data, ignoring cache
+  - Use when you need guaranteed fresh data on every navigation
+
+### Loader Benefits:
 - **No loading spinners**: Data is ready before the page renders
 - **Auth guards**: Redirect unauthenticated users before they see protected content
 - **Better UX**: Users see complete content immediately, not skeletons
@@ -97,59 +150,223 @@ export const homePageLoader = (queryClient: QueryClient) => {
 
 ---
 
-## 🔍 Why Use Queries (TanStack Query)?
+## 🔍 Queries: Reuse Options in Components
 
-**Queries** handle data fetching with automatic caching, refetching, and state management.
+Use the same query options in your component to read from the cache and subscribe to updates.
 
 ```typescript
-// In a component
-const { data, isLoading, error } = useQuery({
-  queryKey: ['users'],
-  queryFn: fetchUsers,
-});
+// src/pages/HomePage/HomePage.tsx
+import { useQuery } from '@tanstack/react-query';
+import { useLoaderData } from 'react-router-dom';
+import { homePageQueryOptions } from './HomePage.queries';
+
+function HomePage() {
+  const initialData = useLoaderData();
+  
+  // Use the same query options - automatically typed!
+  const { data } = useQuery({
+    ...homePageQueryOptions,
+    initialData, // Use loader data as initial data
+  });
+  
+  return <div>{data.message}</div>;
+}
 ```
 
-### Benefits:
+### Query Benefits:
 - **Automatic caching**: Fetch once, reuse everywhere
 - **Background refetching**: Keep data fresh without user interaction
 - **Deduplication**: Multiple components requesting the same data = one network request
 - **Built-in loading/error states**: No need to manage `useState` for every fetch
 - **Optimistic updates**: Update UI instantly, roll back on error
+- **Automatic updates**: When cache is invalidated, component refetches automatically
 
-**When combined with loaders**: The loader prefetches, the query reads from cache. Instant render + always fresh data.
+**The Full Picture**: Loader prefetches → Component uses cached data → Mutation invalidates → Component automatically refetches. All with type safety!
 
 ---
 
-## ✍️ Why Use Mutations?
+## ✍️ Mutations: Invalidate and Refetch
 
-**Mutations** handle data modifications (POST, PUT, DELETE) with side effects.
+**Mutations** handle data modifications (POST, PUT, DELETE) and trigger cache invalidation to keep data fresh.
 
 ```typescript
 // src/pages/HomePage/useHomePageMutation.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRevalidator } from 'react-router-dom';
+import { homePageQueryKey } from './HomePage.queries';
+
 export const useHomePageMutation = () => {
   const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
 
   return useMutation({
     mutationFn: async (data: FormData) => {
       return await apiClient.post('/submit', data);
     },
-    onSuccess: (data) => {
-      // Default success behavior
-      queryClient.invalidateQueries({ queryKey: ['relatedData'] });
+    onSuccess: async (data) => {
+      // Invalidate the query - marks it as stale
+      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      
+      // Revalidate the route - re-runs the loader
+      revalidator.revalidate();
     },
     onError: (error) => {
-      // Default error handling
       console.error('Mutation error:', error);
     },
   });
 };
 ```
 
-### Benefits:
+### How Invalidation Works
+
+1. **Form Submission**: User submits form
+2. **Mutation Executes**: API call completes successfully
+3. **Invalidate Query**: `invalidateQueries` marks the query as stale (data still in cache)
+4. **Revalidate Route**: `revalidator.revalidate()` re-runs the loader
+5. **Loader Prefetches**: Loader fetches fresh data
+6. **Component Refetches**: `useQuery` automatically refetches because query is stale
+7. **UI Updates**: Component displays fresh data
+
+### Mutation Benefits:
 - **Automatic cache updates**: Invalidate or update related queries
 - **Loading states**: Track submission status without manual state
 - **Error handling**: Centralized error management
 - **Retry logic**: Built-in retry on failure
+- **Integration with loaders**: Revalidate routes to prefetch fresh data
+
+---
+
+## 🔗 Complete Data Flow Example
+
+Here's a complete example showing how query options, loaders, queries, and mutations work together:
+
+### 1. Define Query Options (`HomePage.queries.ts`)
+
+```typescript
+import { queryOptions } from '@tanstack/react-query';
+
+export type HomePageData = {
+  message: string;
+  count: number;
+};
+
+export const homePageQueryKey = ['homePageData'] as const;
+
+export const homePageQueryOptions = queryOptions<HomePageData>({
+  queryKey: homePageQueryKey,
+  queryFn: async () => {
+    const response = await fetch('/api/home-data');
+    return response.json();
+  },
+});
+```
+
+### 2. Prefetch in Loader (`HomePage.loader.ts`)
+
+```typescript
+import { QueryClient } from '@tanstack/react-query';
+import { homePageQueryOptions, type HomePageData } from './HomePage.queries';
+
+export const homePageLoader = (queryClient: QueryClient) => {
+  return async (): Promise<HomePageData> => {
+    // Prefetch data before page renders
+    return await queryClient.ensureQueryData(homePageQueryOptions);
+  };
+};
+```
+
+### 3. Use in Component (`HomePage.tsx`)
+
+```typescript
+import { useQuery } from '@tanstack/react-query';
+import { useLoaderData } from 'react-router-dom';
+import { homePageQueryOptions } from './HomePage.queries';
+import { useHomePageMutation } from './useHomePageMutation';
+
+function HomePage() {
+  const initialData = useLoaderData();
+  
+  // Read from cache, subscribe to updates
+  const { data, isLoading } = useQuery({
+    ...homePageQueryOptions,
+    initialData,
+  });
+  
+  const mutation = useHomePageMutation();
+  
+  const handleSubmit = (formData: FormData) => {
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        // Component-specific: show toast, navigate, etc.
+        console.log('Form submitted!');
+      },
+    });
+  };
+  
+  return (
+    <div>
+      <h1>{data.message}</h1>
+      <p>Count: {data.count}</p>
+      {/* Form here */}
+    </div>
+  );
+}
+```
+
+### 4. Mutate and Invalidate (`useHomePageMutation.ts`)
+
+```typescript
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRevalidator } from 'react-router-dom';
+import { homePageQueryKey } from './HomePage.queries';
+
+export const useHomePageMutation = () => {
+  const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
+
+  return useMutation({
+    mutationFn: async (data: FormData) => {
+      return await fetch('/api/submit', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }).then(r => r.json());
+    },
+    onSuccess: async () => {
+      // Default behavior: Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      revalidator.revalidate();
+    },
+  });
+};
+```
+
+### The Complete Flow
+
+```
+User visits /home
+    ↓
+Loader runs (prefetch)
+    ↓
+homePageQueryOptions.queryFn() → Fetch from API
+    ↓
+Data cached in TanStack Query
+    ↓
+Component renders with initialData
+    ↓
+useQuery subscribes to cache updates
+    ↓
+User submits form
+    ↓
+Mutation executes
+    ↓
+onSuccess: invalidateQueries + revalidate
+    ↓
+Loader re-runs → ensureQueryData fetches fresh data
+    ↓
+useQuery refetches (because invalidated)
+    ↓
+Component automatically updates with fresh data ✨
+```
 
 ---
 
@@ -157,16 +374,24 @@ export const useHomePageMutation = () => {
 
 ### The Pattern
 
-**Define mutations in hooks** with sensible defaults, then **override in components** for specific behaviors:
+**Define mutations in hooks** with sensible defaults (like cache invalidation), then **override in components** for specific behaviors:
 
 ```typescript
 // ✅ In hook: useHomePageMutation.ts
+import { homePageQueryKey } from './HomePage.queries';
+
 export const useHomePageMutation = () => {
+  const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
+
   return useMutation({
-    mutationFn: submitForm,
-    onSuccess: (data) => {
-      // Default: Invalidate cache
-      queryClient.invalidateQueries({ queryKey: ['relatedData'] });
+    mutationFn: async (data: FormData) => {
+      return await apiClient.post('/submit', data);
+    },
+    onSuccess: async (data) => {
+      // Default: Invalidate cache and revalidate route
+      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      revalidator.revalidate();
     },
     onError: (error) => {
       // Default: Log error
@@ -182,6 +407,7 @@ const onSubmit = (data: FormData) => {
   mutation.mutate(data, {
     onSuccess: () => {
       // Override: Add component-specific behavior
+      // (Default invalidation still happens first)
       reset();  // Clear form
       navigate('/success');  // Navigate away
       toast.success('Saved!');  // Show notification
@@ -196,13 +422,19 @@ const onSubmit = (data: FormData) => {
 
 ### Benefits
 
-1. **Reusability**: The same mutation hook can be used in multiple components
+1. **Reusability**: The same mutation hook can be used in multiple components with different success behaviors
    ```typescript
-   // AdminPanel.tsx: Redirect to admin dashboard
-   mutation.mutate(data, { onSuccess: () => navigate('/admin') });
+   // AdminPanel.tsx: Redirect to admin dashboard after cache update
+   mutation.mutate(data, { 
+     onSuccess: () => navigate('/admin') 
+   });
    
-   // SettingsPage.tsx: Just show a toast
-   mutation.mutate(data, { onSuccess: () => toast('Updated!') });
+   // SettingsPage.tsx: Just show a toast after cache update
+   mutation.mutate(data, { 
+     onSuccess: () => toast('Updated!') 
+   });
+   
+   // Both cases: Cache is invalidated and data refetches automatically
    ```
 
 2. **Sensible defaults**: Every mutation automatically updates the cache, even if you forget
@@ -249,8 +481,11 @@ yarn build
 1. Follow the folder structure in [STRUCTURE.md](./STRUCTURE.md)
 2. Import directly from source files (no `index.ts` barrels)
 3. Co-locate tests with components
-4. Use loaders for prefetching, queries for reading, mutations for writing
-5. Define mutations in hooks, customize in components
+4. **Use query options pattern**: Centralize query definitions in `*.queries.ts` files
+5. **Use loaders for prefetching**: Use `ensureQueryData` or `fetchQuery` with query options
+6. **Use queries in components**: Reuse the same query options with `useQuery`
+7. **Define mutations in hooks**: Include default behaviors and invalidation logic
+8. **Customize in components**: Override `onSuccess`/`onError` for component-specific behavior
 
 ---
 

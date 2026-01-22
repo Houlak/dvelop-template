@@ -13,6 +13,18 @@ export type SubmitResponse = {
 
 /**
  * Mutation hook for HomePage form submission
+ * 
+ * Default behaviors:
+ * - onSuccess: Invalidates homePageData query and revalidates the route
+ * - onError: Logs error to console
+ * 
+ * Component usage: Override onSuccess/onError for specific behaviors
+ * @example
+ * const mutation = useHomePageMutation();
+ * mutation.mutate(data, {
+ *   onSuccess: () => toast.success('Saved!'),
+ *   onError: (error) => setError(error.message)
+ * });
  */
 export const useHomePageMutation = () => {
   const queryClient = useQueryClient();
@@ -22,18 +34,23 @@ export const useHomePageMutation = () => {
     mutationFn: async (data: FormData): Promise<SubmitResponse> => {
       // Make API call
       // Replace with your actual endpoint
-      // mock response for now
+      // Example: return await apiClient.post('/submit', data);
+      
+      // Mock response for now
       return {
         message: 'Form submitted successfully',
         data: data,
       };
     },
     onSuccess: async (data) => {
-      // Invalidate related queries if needed
+      // Default: Invalidate the query cache and revalidate the route
       await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
-      // Revalidate the route loader to get the latest data
       revalidator.revalidate();
-    }
+    },
+    onError: (error) => {
+      // Default: Log error (override in component for user-facing error handling)
+      console.error('Form submission error:', error);
+    },
   });
 };
 
