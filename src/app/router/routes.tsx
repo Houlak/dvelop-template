@@ -1,6 +1,8 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from '../../pages/ErrorPage/ErrorPage';
+import ExampleDetailPage from '../../pages/ExampleDetailPage/ExampleDetailPage';
+import { exampleDetailPageLoader } from '../../pages/ExampleDetailPage/ExampleDetailPage.loader';
 import ExamplePage from '../../pages/ExamplePage/ExamplePage';
 import { examplePageLoader } from '../../pages/ExamplePage/ExamplePage.loader';
 import LoginPage from '../../pages/LoginPage/LoginPage';
@@ -20,11 +22,17 @@ const getRoutes = (queryClient: QueryClient) =>
           // Protected route group - auth check happens here
           element: <ProtectedLayout />,
           loader: requireAuthLoader,
+          shouldRevalidate: () => true,
           children: [
             {
               index: true,
               element: <ExamplePage />,
               loader: examplePageLoader(queryClient),
+            },
+            {
+              path: 'example/:id',
+              element: <ExampleDetailPage />,
+              loader: exampleDetailPageLoader(queryClient),
             },
             // Add more protected routes here as children
             // Example:
