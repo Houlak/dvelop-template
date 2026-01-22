@@ -1,12 +1,14 @@
-import { BrowserRouter } from 'react-router-dom';
-import Main from './screens/Main';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider } from 'react-router-dom';
+import queryClient from './queries/queryClient';
+import getRoutes from './routes/routes';
 import './styles/app.scss';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Main />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={getRoutes(queryClient)} />
+    </QueryClientProvider>
   );
 }
 

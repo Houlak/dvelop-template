@@ -1,19 +1,18 @@
 .landing {
-  .houlak-logo {
-    height: 30vmin;
-    pointer-events: none;
-  }
+  min-height: inherit;
+  min-block-size: inherit;
+  display: grid;
+  place-content: center;
 
-  @media (prefers-reduced-motion: no-preference) {
-    .houlak-logo {
+  .houlak-logo {
+    margin-inline: auto;
+
+    @media (prefers-reduced-motion: no-preference) {
       animation: houlak-logo-spin infinite 20s linear;
     }
   }
 
   @keyframes houlak-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
     to {
       transform: rotate(360deg);
     }
