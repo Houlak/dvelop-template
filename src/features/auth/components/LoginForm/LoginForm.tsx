@@ -1,15 +1,15 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import * as yup from 'yup';
 import { FieldError, FieldGroup, FieldLabel } from '../../../../shared/components/ui/Field/Field';
 import { Input } from '../../../../shared/components/ui/Input/Input';
 
-const loginFormSchema = z.object({
-  email: z.email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+const loginFormSchema = yup.object({
+  email: yup.string().email('Invalid email address').required('Email is required'),
+  password: yup.string().min(6, (value) => `Password must be at least ${value} characters`).required('Password is required'),
 });
 
-export type LoginFormData = z.infer<typeof loginFormSchema>;
+export type LoginFormData = yup.InferType<typeof loginFormSchema>;
 
 type LoginFormProps = {
   onSubmit: (data: LoginFormData) => void | Promise<void>;
@@ -22,7 +22,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginFormSchema),
+    resolver: yupResolver(loginFormSchema),
     mode: 'onChange',
   });
 

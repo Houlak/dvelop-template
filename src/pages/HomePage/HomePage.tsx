@@ -1,7 +1,7 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { z } from 'zod';
+import * as yup from 'yup';
 import logo from '../../assets/logo.png';
 import { useAuthStore } from '../../features/auth/store/auth.store';
 import { FieldError, FieldGroup, FieldLabel } from '../../shared/components/ui/Field/Field';
@@ -9,8 +9,8 @@ import { Input } from '../../shared/components/ui/Input/Input';
 import type { homePageLoader } from './HomePage.loader';
 import { useHomePageMutation, type FormData } from './useHomePageMutation';
 
-const formSchema = z.object({
-  name: z.string().min(5, 'Name is required'),
+const formSchema = yup.object({
+  name: yup.string().min(5, (value) => `Name must be at least ${value} characters`).required('Name is required'),
 });
 
 function HomePage() {
@@ -25,7 +25,7 @@ function HomePage() {
     formState,
     reset,
   } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: yupResolver(formSchema),
     mode: 'onChange',
   }); 
 
