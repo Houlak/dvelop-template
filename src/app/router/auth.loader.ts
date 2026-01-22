@@ -11,7 +11,6 @@ export async function requireAuthLoader({ request }: LoaderFunctionArgs) {
   
   if (!isAuthenticated) {
     const url = new URL(request.url);
-    console.log(url);
     return redirect(`/login?redirect=${encodeURIComponent(url.pathname)}`);
   }
   

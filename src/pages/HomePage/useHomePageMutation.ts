@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRevalidator } from 'react-router-dom';
+import { homePageQueryKey } from './HomePage.queries';
 
 export type FormData = {
   name: string;
@@ -11,10 +13,10 @@ export type SubmitResponse = {
 
 /**
  * Mutation hook for HomePage form submission
- * Note: Client-side validation is handled by React Hook Form
  */
 export const useHomePageMutation = () => {
   const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
 
   return useMutation({
     mutationFn: async (data: FormData): Promise<SubmitResponse> => {
@@ -26,14 +28,12 @@ export const useHomePageMutation = () => {
         data: data,
       };
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       // Invalidate related queries if needed
-      queryClient.invalidateQueries({ queryKey: ['homePageData'] });
-    },
-    onError: (error) => {
-      // Error handling is done in the component
-      console.error('Form submission error:', error);
-    },
+      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      // Revalidate the route loader to get the latest data
+      revalidator.revalidate();
+    }
   });
 };
 

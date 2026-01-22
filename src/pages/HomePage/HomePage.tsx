@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useQuery } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { useLoaderData } from 'react-router-dom';
 import * as yup from 'yup';
@@ -8,6 +9,7 @@ import { Button } from '../../shared/components/ui/Button/Button';
 import { FieldError, FieldGroup, FieldLabel } from '../../shared/components/ui/Field/Field';
 import { Input } from '../../shared/components/ui/Input/Input';
 import type { homePageLoader } from './HomePage.loader';
+import { homePageQueryOptions } from './HomePage.queries';
 import { useHomePageMutation, type FormData } from './useHomePageMutation';
 
 const formSchema = yup.object({
@@ -16,24 +18,23 @@ const formSchema = yup.object({
 
 function HomePage() {
   const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof homePageLoader>>> | undefined;
+  
+  const { data } = useQuery({...homePageQueryOptions, initialData });
+  
   const mutation = useHomePageMutation();
   const { logout, isLoggingOut } = useLogout();
 
   const {
     control,
     handleSubmit,
-    reset,
   } = useForm<FormData>({
     resolver: yupResolver(formSchema),
     mode: 'onChange',
+    defaultValues: { name: '' }
   }); 
 
   const onSubmit = (data: FormData) => {
-    mutation.mutate(data, {
-      onSuccess: () => {
-        reset();
-      },
-    });
+    mutation.mutate(data);
   };
 
   return (
@@ -45,8 +46,8 @@ function HomePage() {
       />
       <h1>Houlak frontend template</h1>
       
-      {initialData?.message && (
-        <p className="text-center mb-4">{initialData.message}</p>
+      {data?.message && (
+        <p className="text-center mb-4">{data.message}</p>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -54,17 +55,13 @@ function HomePage() {
           <Controller 
             control={control}
             name="name"
-            render={({ field, fieldState: { error } }) => {
-              console.log(error);
-              return (
-              <>
+            render={({ field, fieldState: { error } }) => (
               <FieldGroup>
                 <FieldLabel>Name</FieldLabel>
                 <Input {...field} id="name" placeholder="Name" />
                 <FieldError errors={[error]} />
               </FieldGroup>
-              </>
-            )}}
+            )}
           />
         </div>
         <Button 
