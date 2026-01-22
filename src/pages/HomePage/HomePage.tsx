@@ -1,9 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import * as yup from 'yup';
 import logo from '../../assets/logo.png';
-import { useAuthStore } from '../../features/auth/store/auth.store';
+import { useLogout } from '../../features/auth/hooks/useLogout';
 import { Button } from '../../shared/components/ui/Button/Button';
 import { FieldError, FieldGroup, FieldLabel } from '../../shared/components/ui/Field/Field';
 import { Input } from '../../shared/components/ui/Input/Input';
@@ -17,8 +17,7 @@ const formSchema = yup.object({
 function HomePage() {
   const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof homePageLoader>>> | undefined;
   const mutation = useHomePageMutation();
-  const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.clearAuth);
+  const { logout, isLoggingOut } = useLogout();
 
   const {
     control,
@@ -32,9 +31,9 @@ function HomePage() {
   const onSubmit = (data: FormData) => {
     mutation.mutate(data, {
       onSuccess: () => {
-      reset();
-      navigate('/');
-    }});
+        reset();
+      },
+    });
   };
 
   return (
@@ -84,14 +83,9 @@ function HomePage() {
         
       )}
 
-    <Button 
-    type="button"
-    onClick={() => {
-          logout();
-          navigate('/login');
-        }}>
-          Logout
-          </Button>
+      <Button type="button" onClick={logout} disabled={isLoggingOut}>
+        Logout
+      </Button>
     </main>
   );
 }

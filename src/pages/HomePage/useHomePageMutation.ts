@@ -28,7 +28,7 @@ export const useHomePageMutation = () => {
     },
     onSuccess: (data) => {
       // Invalidate related queries if needed
-      queryClient.invalidateQueries({ queryKey: ['relatedData'] });
+      queryClient.invalidateQueries({ queryKey: ['homePageData'] });
     },
     onError: (error) => {
       // Error handling is done in the component
