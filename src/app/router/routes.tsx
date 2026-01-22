@@ -5,6 +5,8 @@ import HomePage from '../../pages/HomePage/HomePage';
 import { homePageLoader } from '../../pages/HomePage/HomePage.loader';
 import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage/NotFoundPage';
+import { requireAuthLoader } from './auth.loader';
+import { ProtectedLayout } from './ProtectedLayout';
 import Root from './Root';
 
 const getRoutes = (queryClient: QueryClient) =>
@@ -14,10 +16,24 @@ const getRoutes = (queryClient: QueryClient) =>
       element: <Root />,
       errorElement: <ErrorPage />,
       children: [
-        { 
-          index: true, 
-          element: <HomePage />,
-          loader: homePageLoader(queryClient),
+        {
+          // Protected route group - auth check happens here
+          element: <ProtectedLayout />,
+          loader: requireAuthLoader,
+          children: [
+            {
+              index: true,
+              element: <HomePage />,
+              loader: homePageLoader(queryClient),
+            },
+            // Add more protected routes here as children
+            // Example:
+            // {
+            //   path: 'dashboard',
+            //   element: <DashboardPage />,
+            //   loader: dashboardLoader(queryClient),
+            // },
+          ],
         },
         {
           path: 'login',
