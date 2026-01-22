@@ -25,6 +25,10 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginFormSchema),
     mode: 'onChange',
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   return (
