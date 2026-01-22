@@ -4,6 +4,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import logo from '../../assets/logo.png';
 import { useAuthStore } from '../../features/auth/store/auth.store';
+import { Button } from '../../shared/components/ui/Button/Button';
 import { FieldError, FieldGroup, FieldLabel } from '../../shared/components/ui/Field/Field';
 import { Input } from '../../shared/components/ui/Input/Input';
 import type { homePageLoader } from './HomePage.loader';
@@ -22,25 +23,18 @@ function HomePage() {
   const {
     control,
     handleSubmit,
-    formState,
     reset,
   } = useForm<FormData>({
     resolver: yupResolver(formSchema),
     mode: 'onChange',
   }); 
 
-  const { errors, isValid } = formState;
-
-  const onSubmit = async (data: FormData) => {
-    try {
-      await mutation.mutateAsync(data);
-      // Reset form on success
+  const onSubmit = (data: FormData) => {
+    mutation.mutate(data, {
+      onSuccess: () => {
       reset();
       navigate('/');
-    } catch (error) {
-      // Error is handled by mutation.onError and useEffect above
-      console.error('Submission error:', error);
-    }
+    }});
   };
 
   return (
@@ -74,13 +68,12 @@ function HomePage() {
             )}}
           />
         </div>
-        <button 
+        <Button 
           type="submit" 
-          className="block mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
           disabled={mutation.isPending}
         >
           {mutation.isPending ? 'Submitting...' : 'Submit'}
-        </button>
+        </Button>
       </form>
 
       {mutation.isSuccess && (
@@ -91,14 +84,13 @@ function HomePage() {
         
       )}
 
-    <button 
+    <Button 
     type="button"
-    className="block mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50" 
     onClick={() => {
           logout();
         }}>
           Logout
-          </button>
+          </Button>
     </main>
   );
 }

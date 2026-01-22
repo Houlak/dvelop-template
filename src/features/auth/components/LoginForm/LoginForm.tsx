@@ -20,14 +20,14 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginFormSchema),
     mode: 'onChange',
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid gap-4">
         <Controller
           control={control}
@@ -68,13 +68,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
         />
       </div>
 
-      <button
-        type="submit"
-        className="block mt-6 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        disabled={isLoading || !isValid}
-      >
-        {isLoading ? 'Logging in...' : 'Login'}
-      </button>
+      
     </form>
   );
 }
