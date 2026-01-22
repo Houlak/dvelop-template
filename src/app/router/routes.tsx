@@ -1,8 +1,8 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from '../../pages/ErrorPage/ErrorPage';
-import HomePage from '../../pages/HomePage/HomePage';
-import { homePageLoader } from '../../pages/HomePage/HomePage.loader';
+import ExamplePage from '../../pages/ExamplePage/ExamplePage';
+import { examplePageLoader } from '../../pages/ExamplePage/ExamplePage.loader';
 import LoginPage from '../../pages/LoginPage/LoginPage';
 import NotFoundPage from '../../pages/NotFoundPage/NotFoundPage';
 import { requireAuthLoader } from './auth.loader';
@@ -23,8 +23,8 @@ const getRoutes = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              element: <HomePage />,
-              loader: homePageLoader(queryClient),
+              element: <ExamplePage />,
+              loader: examplePageLoader(queryClient),
             },
             // Add more protected routes here as children
             // Example:

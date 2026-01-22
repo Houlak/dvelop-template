@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRevalidator } from 'react-router-dom';
-import { homePageQueryKey } from './HomePage.queries';
+import { exampleQueryKey } from '../api/example.queries';
 
 export type FormData = {
   name: string;
@@ -12,21 +12,21 @@ export type SubmitResponse = {
 };
 
 /**
- * Mutation hook for HomePage form submission
+ * Mutation hook for Example form submission
  * 
  * Default behaviors:
- * - onSuccess: Invalidates homePageData query and revalidates the route
+ * - onSuccess: Invalidates exampleData query and revalidates the route
  * - onError: Logs error to console
  * 
  * Component usage: Override onSuccess/onError for specific behaviors
  * @example
- * const mutation = useHomePageMutation();
+ * const mutation = useExampleMutation();
  * mutation.mutate(data, {
  *   onSuccess: () => toast.success('Saved!'),
  *   onError: (error) => setError(error.message)
  * });
  */
-export const useHomePageMutation = () => {
+export const useExampleMutation = () => {
   const queryClient = useQueryClient();
   const revalidator = useRevalidator();
 
@@ -44,7 +44,7 @@ export const useHomePageMutation = () => {
     },
     onSuccess: async (data) => {
       // Default: Invalidate the query cache and revalidate the route
-      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
       revalidator.revalidate();
     },
     onError: (error) => {

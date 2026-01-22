@@ -54,8 +54,8 @@ const getRoutes = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              element: <HomePage />,
-              loader: homePageLoader(queryClient),  // ← Data prefetch
+              element: <ExamplePage />,
+              loader: examplePageLoader(queryClient),  // ← Data prefetch
             },
           ],
         },
@@ -67,8 +67,8 @@ const getRoutes = (queryClient: QueryClient) =>
 **Flow**:
 1. User navigates to `/`
 2. `requireAuthLoader` runs → checks authentication, redirects if needed
-3. `homePageLoader` runs → prefetches data
-4. `<HomePage />` renders with data already available
+3. `examplePageLoader` runs → prefetches data
+4. `<ExamplePage />` renders with data already available
 
 ---
 
@@ -79,30 +79,34 @@ The recommended pattern is to **centralize query definitions** using `queryOptio
 ### File Structure
 
 ```
-src/pages/HomePage/
-├── HomePage.tsx              # Component
-├── HomePage.loader.ts        # Route loader
-├── HomePage.queries.ts       # ← Query definitions (NEW)
-└── useHomePageMutation.ts    # Mutation hook
+src/pages/ExamplePage/
+├── ExamplePage.tsx              # Component (page entry point)
+├── ExamplePage.loader.ts        # Route loader
+
+src/features/example/            # Feature-specific logic
+├── api/
+│   └── example.queries.ts       # ← Query definitions (NEW)
+└── hooks/
+    └── useExampleMutation.ts    # Mutation hook
 ```
 
 ### Define Query Options Once
 
 ```typescript
-// src/pages/HomePage/HomePage.queries.ts
+// src/features/example/api/example.queries.ts
 import { queryOptions } from '@tanstack/react-query';
 
-export type HomePageData = {
+export type ExampleData = {
   message: string;
 };
 
-export const homePageQueryKey = ['homePageData'] as const;
+export const exampleQueryKey = ['exampleData'] as const;
 
-export const homePageQueryOptions = queryOptions<HomePageData>({
-  queryKey: homePageQueryKey,
+export const exampleQueryOptions = queryOptions<ExampleData>({
+  queryKey: exampleQueryKey,
   queryFn: async () => {
     // Your API call here
-    return await apiClient.get('/home-data');
+    return await apiClient.get('/example-data');
   },
 });
 ```
@@ -122,13 +126,13 @@ export const homePageQueryOptions = queryOptions<HomePageData>({
 **Loaders** run before a route renders and prefetch data using the centralized query options.
 
 ```typescript
-// src/pages/HomePage/HomePage.loader.ts
+// src/pages/ExamplePage/ExamplePage.loader.ts
 import { QueryClient } from '@tanstack/react-query';
-import { homePageQueryOptions, type HomePageData } from './HomePage.queries';
+import { exampleQueryOptions, type ExampleData } from '../../features/example/api/example.queries';
 
-export const homePageLoader = (queryClient: QueryClient) => {
-  return async ({ request, params }): Promise<HomePageData> => {
-    const response = await queryClient.ensureQueryData(homePageQueryOptions);
+export const examplePageLoader = (queryClient: QueryClient) => {
+  return async ({ request, params }): Promise<ExampleData> => {
+    const response = await queryClient.ensureQueryData(exampleQueryOptions);
     return response;
   };
 };
@@ -155,17 +159,17 @@ export const homePageLoader = (queryClient: QueryClient) => {
 Use the same query options in your component to read from the cache and subscribe to updates.
 
 ```typescript
-// src/pages/HomePage/HomePage.tsx
+// src/pages/ExamplePage/ExamplePage.tsx
 import { useQuery } from '@tanstack/react-query';
 import { useLoaderData } from 'react-router-dom';
-import { homePageQueryOptions } from './HomePage.queries';
+import { exampleQueryOptions } from '../../features/example/api/example.queries';
 
-function HomePage() {
+function ExamplePage() {
   const initialData = useLoaderData();
   
   // Use the same query options - automatically typed!
   const { data } = useQuery({
-    ...homePageQueryOptions,
+    ...exampleQueryOptions,
     initialData, // Use loader data as initial data
   });
   
@@ -190,12 +194,12 @@ function HomePage() {
 **Mutations** handle data modifications (POST, PUT, DELETE) and trigger cache invalidation to keep data fresh.
 
 ```typescript
-// src/pages/HomePage/useHomePageMutation.ts
+// src/features/example/hooks/useExampleMutation.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRevalidator } from 'react-router-dom';
-import { homePageQueryKey } from './HomePage.queries';
+import { exampleQueryKey } from '../api/example.queries';
 
-export const useHomePageMutation = () => {
+export const useExampleMutation = () => {
   const queryClient = useQueryClient();
   const revalidator = useRevalidator();
 
@@ -205,7 +209,7 @@ export const useHomePageMutation = () => {
     },
     onSuccess: async (data) => {
       // Invalidate the query - marks it as stale
-      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
       
       // Revalidate the route - re-runs the loader
       revalidator.revalidate();
@@ -240,59 +244,62 @@ export const useHomePageMutation = () => {
 
 Here's a complete example showing how query options, loaders, queries, and mutations work together:
 
-### 1. Define Query Options (`HomePage.queries.ts`)
+### 1. Define Query Options (`example.queries.ts`)
 
 ```typescript
+// src/features/example/api/example.queries.ts
 import { queryOptions } from '@tanstack/react-query';
 
-export type HomePageData = {
+export type ExampleData = {
   message: string;
   count: number;
 };
 
-export const homePageQueryKey = ['homePageData'] as const;
+export const exampleQueryKey = ['exampleData'] as const;
 
-export const homePageQueryOptions = queryOptions<HomePageData>({
-  queryKey: homePageQueryKey,
+export const exampleQueryOptions = queryOptions<ExampleData>({
+  queryKey: exampleQueryKey,
   queryFn: async () => {
-    const response = await fetch('/api/home-data');
+    const response = await fetch('/api/example-data');
     return response.json();
   },
 });
 ```
 
-### 2. Prefetch in Loader (`HomePage.loader.ts`)
+### 2. Prefetch in Loader (`ExamplePage.loader.ts`)
 
 ```typescript
+// src/pages/ExamplePage/ExamplePage.loader.ts
 import { QueryClient } from '@tanstack/react-query';
-import { homePageQueryOptions, type HomePageData } from './HomePage.queries';
+import { exampleQueryOptions, type ExampleData } from '../../features/example/api/example.queries';
 
-export const homePageLoader = (queryClient: QueryClient) => {
-  return async (): Promise<HomePageData> => {
+export const examplePageLoader = (queryClient: QueryClient) => {
+  return async (): Promise<ExampleData> => {
     // Prefetch data before page renders
-    return await queryClient.ensureQueryData(homePageQueryOptions);
+    return await queryClient.ensureQueryData(exampleQueryOptions);
   };
 };
 ```
 
-### 3. Use in Component (`HomePage.tsx`)
+### 3. Use in Component (`ExamplePage.tsx`)
 
 ```typescript
+// src/pages/ExamplePage/ExamplePage.tsx
 import { useQuery } from '@tanstack/react-query';
 import { useLoaderData } from 'react-router-dom';
-import { homePageQueryOptions } from './HomePage.queries';
-import { useHomePageMutation } from './useHomePageMutation';
+import { exampleQueryOptions } from '../../features/example/api/example.queries';
+import { useExampleMutation } from '../../features/example/hooks/useExampleMutation';
 
-function HomePage() {
+function ExamplePage() {
   const initialData = useLoaderData();
   
   // Read from cache, subscribe to updates
   const { data, isLoading } = useQuery({
-    ...homePageQueryOptions,
+    ...exampleQueryOptions,
     initialData,
   });
   
-  const mutation = useHomePageMutation();
+  const mutation = useExampleMutation();
   
   const handleSubmit = (formData: FormData) => {
     mutation.mutate(formData, {
@@ -313,14 +320,15 @@ function HomePage() {
 }
 ```
 
-### 4. Mutate and Invalidate (`useHomePageMutation.ts`)
+### 4. Mutate and Invalidate (`useExampleMutation.ts`)
 
 ```typescript
+// src/features/example/hooks/useExampleMutation.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRevalidator } from 'react-router-dom';
-import { homePageQueryKey } from './HomePage.queries';
+import { exampleQueryKey } from '../api/example.queries';
 
-export const useHomePageMutation = () => {
+export const useExampleMutation = () => {
   const queryClient = useQueryClient();
   const revalidator = useRevalidator();
 
@@ -333,7 +341,7 @@ export const useHomePageMutation = () => {
     },
     onSuccess: async () => {
       // Default behavior: Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
       revalidator.revalidate();
     },
   });
@@ -343,11 +351,11 @@ export const useHomePageMutation = () => {
 ### The Complete Flow
 
 ```
-User visits /home
+User visits / (example page)
     ↓
 Loader runs (prefetch)
     ↓
-homePageQueryOptions.queryFn() → Fetch from API
+exampleQueryOptions.queryFn() → Fetch from API
     ↓
 Data cached in TanStack Query
     ↓
@@ -377,10 +385,10 @@ Component automatically updates with fresh data ✨
 **Define mutations in hooks** with sensible defaults (like cache invalidation), then **override in components** for specific behaviors:
 
 ```typescript
-// ✅ In hook: useHomePageMutation.ts
-import { homePageQueryKey } from './HomePage.queries';
+// ✅ In hook: src/features/example/hooks/useExampleMutation.ts
+import { exampleQueryKey } from '../api/example.queries';
 
-export const useHomePageMutation = () => {
+export const useExampleMutation = () => {
   const queryClient = useQueryClient();
   const revalidator = useRevalidator();
 
@@ -390,7 +398,7 @@ export const useHomePageMutation = () => {
     },
     onSuccess: async (data) => {
       // Default: Invalidate cache and revalidate route
-      await queryClient.invalidateQueries({ queryKey: homePageQueryKey });
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
       revalidator.revalidate();
     },
     onError: (error) => {
@@ -400,8 +408,8 @@ export const useHomePageMutation = () => {
   });
 };
 
-// ✅ In component: HomePage.tsx
-const mutation = useHomePageMutation();
+// ✅ In component: src/pages/ExamplePage/ExamplePage.tsx
+const mutation = useExampleMutation();
 
 const onSubmit = (data: FormData) => {
   mutation.mutate(data, {

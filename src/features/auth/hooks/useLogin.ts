@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authApi } from '../../features/auth/api/auth.api';
-import type { LoginResponse } from '../../features/auth/api/auth.types';
-import type { LoginFormData } from '../../features/auth/components/LoginForm/LoginForm';
-import { useAuthStore } from '../../features/auth/store/auth.store';
+import { authApi } from '../api/auth.api';
+import type { LoginResponse } from '../api/auth.types';
+import type { LoginFormData } from '../components/LoginForm/LoginForm';
+import { useAuthStore } from '../store/auth.store';
 
 export type LoginMutationResponse = {
   message: string;
@@ -10,10 +10,10 @@ export type LoginMutationResponse = {
 };
 
 /**
- * Mutation hook for LoginPage form submission
+ * Mutation hook for login authentication
  * Handles authentication via auth service
  */
-export const useLoginPageMutation = () => {
+export const useLogin = () => {
   const queryClient = useQueryClient();
   const setAuth = useAuthStore((state) => state.setAuth);
 

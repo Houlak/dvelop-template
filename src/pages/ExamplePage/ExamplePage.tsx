@@ -5,23 +5,23 @@ import { useLoaderData } from 'react-router-dom';
 import * as yup from 'yup';
 import logo from '../../assets/logo.png';
 import { useLogout } from '../../features/auth/hooks/useLogout';
+import { exampleQueryOptions } from '../../features/example/api/example.queries';
+import { useExampleMutation, type FormData } from '../../features/example/hooks/useExampleMutation';
 import { Button } from '../../shared/components/ui/Button/Button';
 import { FieldError, FieldGroup, FieldLabel } from '../../shared/components/ui/Field/Field';
 import { Input } from '../../shared/components/ui/Input/Input';
-import type { homePageLoader } from './HomePage.loader';
-import { homePageQueryOptions } from './HomePage.queries';
-import { useHomePageMutation, type FormData } from './useHomePageMutation';
+import type { examplePageLoader } from './ExamplePage.loader';
 
 const formSchema = yup.object({
   name: yup.string().min(5, ({ min }) => `Name must be at least ${min} characters`).required('Name is required'),
 });
 
-function HomePage() {
-  const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof homePageLoader>>> | undefined;
+function ExamplePage() {
+  const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof examplePageLoader>>> | undefined;
   
-  const { data } = useQuery({...homePageQueryOptions, initialData });
+  const { data } = useQuery({...exampleQueryOptions, initialData });
   
-  const mutation = useHomePageMutation();
+  const mutation = useExampleMutation();
   const { logout, isLoggingOut } = useLogout();
 
   const {
@@ -87,5 +87,5 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default ExamplePage;
 

@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { LoginForm, type LoginFormData } from '../../features/auth/components/LoginForm/LoginForm';
+import { useLogin } from '../../features/auth/hooks/useLogin';
 import { useAuthStore } from '../../features/auth/store/auth.store';
 import { Card, CardContent, CardHeader, CardTitle } from '../../shared/components/ui/Card/Card';
-import { useLoginPageMutation } from './useLoginPageMutation';
 
 function LoginPage() {
-  const mutation = useLoginPageMutation();
+  const mutation = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
