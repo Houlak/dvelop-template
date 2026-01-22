@@ -11,7 +11,7 @@ import type { homePageLoader } from './HomePage.loader';
 import { useHomePageMutation, type FormData } from './useHomePageMutation';
 
 const formSchema = yup.object({
-  name: yup.string().min(5, (value) => `Name must be at least ${value} characters`).required('Name is required'),
+  name: yup.string().min(5, ({ min }) => `Name must be at least ${min} characters`).required('Name is required'),
 });
 
 function HomePage() {
@@ -88,6 +88,7 @@ function HomePage() {
     type="button"
     onClick={() => {
           logout();
+          navigate('/login');
         }}>
           Logout
           </Button>
