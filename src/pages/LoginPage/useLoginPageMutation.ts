@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../../features/auth/api/auth.api';
-import type { LoginFormData } from '../../features/auth/components/LoginForm/LoginForm';
 import type { LoginResponse } from '../../features/auth/api/auth.types';
+import type { LoginFormData } from '../../features/auth/components/LoginForm/LoginForm';
+import { useAuthStore } from '../../features/auth/store/auth.store';
 
 export type LoginMutationResponse = {
   message: string;
@@ -14,6 +15,7 @@ export type LoginMutationResponse = {
  */
 export const useLoginPageMutation = () => {
   const queryClient = useQueryClient();
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation({
     mutationFn: async (data: LoginFormData): Promise<LoginMutationResponse> => {
@@ -29,10 +31,11 @@ export const useLoginPageMutation = () => {
       };
     },
     onSuccess: (data) => {
+      // Store auth data in Zustand store (with persistence)
+      setAuth(data.data.user, data.data.token);
+      
       // Invalidate related queries if needed
       queryClient.invalidateQueries({ queryKey: ['auth'] });
-      // You can also set user data in cache or context here
-      console.log('Login successful:', data);
     },
     onError: (error) => {
       console.error('Login error:', error);

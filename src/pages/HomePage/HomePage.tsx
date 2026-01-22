@@ -3,6 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import logo from '../../assets/logo.png';
+import { useAuthStore } from '../../features/auth/store/auth.store';
 import { FieldError, FieldGroup, FieldLabel } from '../../shared/components/ui/Field/Field';
 import { Input } from '../../shared/components/ui/Input/Input';
 import type { homePageLoader } from './HomePage.loader';
@@ -16,6 +17,7 @@ function HomePage() {
   const initialData = useLoaderData() as Awaited<ReturnType<ReturnType<typeof homePageLoader>>> | undefined;
   const mutation = useHomePageMutation();
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.clearAuth);
 
   const {
     control,
@@ -85,7 +87,18 @@ function HomePage() {
         <div className="mt-4 p-3 bg-green-100 text-green-800 rounded">
           Success! Form submitted successfully.
         </div>
+
+        
       )}
+
+    <button 
+    type="button"
+    className="block mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50" 
+    onClick={() => {
+          logout();
+        }}>
+          Logout
+          </button>
     </main>
   );
 }

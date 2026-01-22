@@ -1,19 +1,25 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginForm, type LoginFormData } from '../../features/auth/components/LoginForm/LoginForm';
+import { useAuthStore } from '../../features/auth/store/auth.store';
 import { useLoginPageMutation } from './useLoginPageMutation';
 
 function LoginPage() {
   const mutation = useLoginPageMutation();
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const response = await mutation.mutateAsync(data);
-      // On successful login, you might want to:
-      // - Store token in localStorage/sessionStorage
-      // - Update auth context/state
-      // - Redirect to dashboard or home
-      console.log('Logged in user:', response.data.user);
+      await mutation.mutateAsync(data);
+      // Redirect after successful login (auth is stored in Zustand store)
       navigate('/');
     } catch (error) {
       // Error is handled by mutation.onError
