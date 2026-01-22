@@ -47,7 +47,7 @@ export async function getUserByIdMock(id: number) {
  * 1. MSW (Mock Service Worker):
  *    - Usa getUsers(), getUserById(), createUser()
  *    - Activa con VITE_USE_MOCKS=true en .env
- *    - Interceptor transparente que funciona con axios
+ *    - Intercepta de forma transparente y funciona con axios
  *    - Simula requests HTTP reales con status codes, delays
  *    - Ventaja: No cambia código, solo variable de entorno
  * 
