@@ -102,24 +102,6 @@ test.describe('Protected Feature', () => {
 });
 ```
 
-### API Mocking
-
-Mock API responses for predictable tests:
-
-```typescript
-test('should handle API response', async ({ page }) => {
-  await page.route('**/api/endpoint', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ data: 'mock data' })
-    });
-  });
-  
-  // Your test logic here
-});
-```
-
 ## Best Practices
 
 ### 1. Use Semantic Selectors
