@@ -1,8 +1,8 @@
-import { test as base } from '@playwright/test';
+import { test as base, Page } from '@playwright/test';
 import { config } from '../config';
 
 type AuthFixtures = {
-  authenticatedPage: any;
+  authenticatedPage: Page;
 };
 
 /**
