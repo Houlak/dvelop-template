@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
-/* Custom theme variables from _variables.scss */
-@theme {
-  --color-background: #282c34;
-  --color-white: #ffffff;
-  
+@theme {  
   /* shadcn/ui CSS variables - Tailwind v4 format */
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(0 0% 3.9%);
@@ -49,7 +45,6 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
   }
 }
 
