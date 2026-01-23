@@ -68,14 +68,6 @@ Tests for authenticated user interactions:
 - Logout functionality
 - Unauthenticated access redirection
 
-### 3. API Mocking Examples (`example/api-mocking.spec.ts`)
-
-Advanced examples demonstrating:
-- Handling different API response statuses
-- Intercepting and modifying requests
-- Sequential API call mocking
-- Network timeout handling
-
 ## Writing Tests
 
 ### Basic Test Structure
