@@ -10,9 +10,7 @@ function ExampleDetailPage() {
     <main className="min-h-[inherit] [min-block-size:inherit] grid place-content-center p-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
-          <Link to="/">
-            <Button variant="outline">← Back to Example List</Button>
-          </Link>
+          <Button render={<Link to="/">Back to Example List</Link>} />
         </div>
 
         <Card className="p-6">
@@ -29,22 +27,18 @@ function ExampleDetailPage() {
           </div>
 
           <div className="mt-8 flex gap-4">
-            <Link to="/">
-              <Button>Back to Example List</Button>
-            </Link>
+            <Button render={<Link to="/">Back to Example List</Link>} />
             
             {/* Navigation to other example items */}
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((num) => (
-                <Link key={num} to={`/example/${num}`}>
                   <Button 
+                    key={num}
                     variant={data.id === String(num) ? 'default' : 'outline'}
                     size="sm"
-                  >
-                    {num}
-                  </Button>
-                </Link>
-              ))}
+                    render={<Link to={`/example/${num}`}>{num}</Link>}
+                  />
+                ))}
             </div>
           </div>
         </Card>

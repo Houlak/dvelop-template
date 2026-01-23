@@ -43,11 +43,16 @@ function ExamplePage() {
     <main className="min-h-[inherit] [min-block-size:inherit] grid place-items-center">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Houlak frontend template</CardTitle>
-          <CardDescription>This is a template for a frontend application.</CardDescription>
-          {data?.message && (
-            <CardDescription>{data.message}</CardDescription>
-          )}
+          <CardTitle>
+            <h1>Houlak frontend template</h1>
+          </CardTitle>
+          <CardDescription>
+            <p>This is a template for a frontend application.</p>
+
+            {data?.message && (
+              <p>{data.message}</p>
+            )}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 mb-4">

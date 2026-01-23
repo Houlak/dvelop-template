@@ -7,7 +7,14 @@ import { Input } from '../../../../shared/components/ui/Input/Input';
 
 const loginFormSchema = yup.object({
   email: yup.string().email('Invalid email address').required('Email is required'),
-  password: yup.string().min(6, ({ min }) => `Password must be at least ${min} characters`).required('Password is required'),
+  // Password must have an uppercase letter, a lowercase letter, a number, and a special character
+  password: yup.string()
+  .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+  .matches(/[0-9]/, 'Password must contain at least one number')
+  .matches(/[!@#$%^&*]/, 'Password must contain at least one special character')
+  .min(8, ({ min }) => `Password must be at least ${min} characters`)
+  .required('Password is required'),
 });
 
 export type LoginFormData = yup.InferType<typeof loginFormSchema>;
