@@ -35,7 +35,9 @@ function LoginPage() {
     <main className="min-h-[inherit] [min-block-size:inherit] grid place-items-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>
+            <h1>Login</h1>
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex-col gap-2">
           <LoginForm onSubmit={onSubmit} isLoading={mutation.isPending} />
