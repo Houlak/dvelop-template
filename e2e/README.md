@@ -10,7 +10,6 @@ e2e/
 │   └── login.spec.ts          # Login page tests
 ├── example/
 │   ├── example-page.spec.ts   # Protected page tests
-│   └── api-mocking.spec.ts    # Advanced API mocking examples
 ├── fixtures/
 │   └── auth.fixture.ts        # Reusable authentication fixture
 └── README.md                  # This file
