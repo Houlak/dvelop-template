@@ -1,51 +1,504 @@
-# React frontend template
+# React Frontend Template
 
-React template for web frontend projects
+A production-ready React template built with TypeScript, React Router, TanStack Query, and feature-based architecture.
 
-## Notes
+## 🏗️ Architecture Principles
 
-- Always try to avoid having warnings.
-- Try to avoid usage of plain CSS, please try to use SASS instead.
+This template follows a **feature-based architecture** with clear separation of concerns. See [STRUCTURE.md](./STRUCTURE.md) for the complete folder structure.
 
-## Imports order
+### Why These Core Principles?
 
-We try to import all used libraries, functions, etc. on the top of the files, and in a certain order, so it is easier to browse dependencies. The order should be as following:
+#### 1. **Feature-Based Organization**
+- **What**: Group code by business domain (e.g., `auth/`, `users/`, `products/`)
+- **Why**: As your app grows, features are easier to locate, modify, and remove. New developers can understand one feature at a time without navigating the entire codebase.
 
-- First we import all necessary things from third party libraries sorted alphabetically.
-- Immediately in the next line we import all the necessary things from our project. Remember that we do not leave a line between "external" and "internal" imports.
-- We order our "internal" imports following this criteria: from “more far away” to “less far away”, so in the next example, the import from `../utils/routes` comes before `./Auth/Login`.
-- Apart from that, we always need to put together imports from the same folder, and the same with imports with similar paths. For instance, in this example, all imports from the `store` folder should be together, and the same should be done with the other folders like `components`, `assets`, etc.
+#### 2. **Separation of Concerns**
+- **What**: Each layer has a clear responsibility (API, components, hooks, state)
+- **Why**: Changes in one layer don't cascade through the app. You can swap your API client, UI library, or state management without touching business logic.
 
-All of these rules can be automatically applied in VS Code by clicking with the second button in the file code, then clicking `Source Action...` and finally `Sort Imports`.
+#### 3. **Reusability Through `shared/`**
+- **What**: Common components, hooks, and utilities live in `shared/`
+- **Why**: Prevents code duplication and ensures consistency. Update a Button component once, it reflects everywhere.
 
-**Example: here we can see our criteria being applyed.**
+#### 4. **Scalability**
+- **What**: Add new features by creating new folders, not refactoring existing code
+- **Why**: Teams can work in parallel on different features without merge conflicts. Onboarding is faster when structure is predictable.
 
-- Before:
+#### 5. **Co-located Tests**
+- **What**: Tests live next to the code they test (`Component.tsx` → `Component.test.tsx`)
+- **Why**: When you modify code, the test is right there. Reduces context switching and makes TDD natural.
 
-<img width="550" alt="Before imports order criteria being applyed" src="https://user-images.githubusercontent.com/37369221/194677882-6b87fac9-e207-4bf2-8165-7518d101100a.png">
+#### 6. **No Barrel Files**
+- **What**: Import directly from source files, not from `index.ts` re-exports
+- **Why**: Better tree-shaking, clearer dependencies, and no circular import issues. Your IDE can navigate to the actual file instantly.
 
-<img width="170" alt="Source Action..." src="https://user-images.githubusercontent.com/37369221/194677891-88aae041-d61b-48cf-961f-548b6e42282b.png"> <img width="220" alt="Sort Imports" src="https://user-images.githubusercontent.com/37369221/194677898-f127d26c-a19c-4c4d-ac1c-b2f263efc0b3.png">
+---
 
-- After:
+## 🛣️ Routing System
 
-<img width="550" alt="After imports order criteria being applyed" src="https://user-images.githubusercontent.com/37369221/194677970-807a2408-c4d9-4133-8ac8-db93692d847f.png">
+We use **React Router v6** with **loaders** and **TanStack Query** for data management.
 
-But this is not even necessary. If in the `.vscode/settings.json` file we have this configuration inside, the imports will sort automatically whenever we save that file:
+### How It Works
+
+```typescript
+// src/app/router/routes.tsx
+const getRoutes = (queryClient: QueryClient) =>
+  createBrowserRouter([
+    {
+      path: '/',
+      element: <Root />,
+      children: [
+        {
+          element: <ProtectedLayout />,
+          loader: requireAuthLoader,  // ← Auth check happens here
+          children: [
+            {
+              index: true,
+              element: <ExamplePage />,
+              loader: examplePageLoader(queryClient),  // ← Data prefetch
+            },
+          ],
+        },
+      ],
+    },
+  ]);
+```
+
+**Flow**:
+1. User navigates to `/`
+2. `requireAuthLoader` runs → checks authentication, redirects if needed
+3. `examplePageLoader` runs → prefetches data
+4. `<ExamplePage />` renders with data already available
+
+---
+
+## 📦 Query Options Pattern: Centralized Query Definitions
+
+The recommended pattern is to **centralize query definitions** using `queryOptions()` from TanStack Query. This ensures type safety and reusability across loaders and components.
+
+### File Structure
 
 ```
-  "editor.codeActionsOnSave": { "source.organizeImports": true }
+src/pages/ExamplePage/
+├── ExamplePage.tsx              # Component (page entry point)
+├── ExamplePage.loader.ts        # Route loader
+
+src/features/example/            # Feature-specific logic
+├── api/
+│   └── example.queries.ts       # ← Query definitions (NEW)
+└── hooks/
+    └── useExampleMutation.ts    # Mutation hook
 ```
 
-### Going one step further...
+### Define Query Options Once
 
-We can even go one step further and create, for example, an `index.tsx` file in the components folder so that we can export all of them together and then we are able to import the components that we need together in the same line:
+```typescript
+// src/features/example/api/example.queries.ts
+import { queryOptions } from '@tanstack/react-query';
 
-- Before:
+export type ExampleData = {
+  message: string;
+};
 
-<img width="800" alt="Going one step further... Before" src="https://user-images.githubusercontent.com/37369221/194678089-a9581525-fc6e-4436-afa4-42de5c10d31e.png">
+export const exampleQueryKey = ['exampleData'] as const;
 
-- After:
+export const exampleQueryOptions = queryOptions<ExampleData>({
+  queryKey: exampleQueryKey,
+  queryFn: async () => {
+    // Your API call here
+    return await apiClient.get('/example-data');
+  },
+});
+```
 
-<img width="800" alt="Going one step further... After 1" src="https://user-images.githubusercontent.com/37369221/194678093-5a5b5d9b-e82f-4145-990e-f04c64fa6c03.png">
+### Benefits of Query Options
 
-<img width="500" alt="Going one step further... After 2" src="https://user-images.githubusercontent.com/37369221/194678097-78babf4e-6ec1-4399-8b4f-7fd5b3c8e45a.png">
+1. **Type Safety**: Types are inferred automatically in both loaders and components
+2. **DRY**: Define queryKey and queryFn once, use everywhere
+3. **Consistency**: Same query logic in prefetching and client-side fetching
+4. **Easy Refactoring**: Change the API call in one place
+5. **Better Testing**: Mock the query options, not individual functions
+
+---
+
+## 🔄 Loaders: Prefetch with Query Options
+
+**Loaders** run before a route renders and prefetch data using the centralized query options.
+
+```typescript
+// src/pages/ExamplePage/ExamplePage.loader.ts
+import { QueryClient } from '@tanstack/react-query';
+import { exampleQueryOptions, type ExampleData } from '../../features/example/api/example.queries';
+
+export const examplePageLoader = (queryClient: QueryClient) => {
+  return async ({ request, params }): Promise<ExampleData> => {
+    const response = await queryClient.ensureQueryData(exampleQueryOptions);
+    return response;
+  };
+};
+```
+
+### `ensureQueryData` vs `fetchQuery`
+
+- **`ensureQueryData`**: Returns cached data if available, only fetches if missing or stale
+  - Use when you want to reuse cached data for better performance
+  
+- **`fetchQuery`**: Always fetches fresh data, ignoring cache
+  - Use when you need guaranteed fresh data on every navigation
+
+### Loader Benefits:
+- **No loading spinners**: Data is ready before the page renders
+- **Auth guards**: Redirect unauthenticated users before they see protected content
+- **Better UX**: Users see complete content immediately, not skeletons
+- **SSR-ready**: Loaders can run on the server for true SSR/SSG
+
+---
+
+## 🔍 Queries: Reuse Options in Components
+
+Use the same query options in your component to read from the cache and subscribe to updates.
+
+```typescript
+// src/pages/ExamplePage/ExamplePage.tsx
+import { useQuery } from '@tanstack/react-query';
+import { useLoaderData } from 'react-router-dom';
+import { exampleQueryOptions } from '../../features/example/api/example.queries';
+
+function ExamplePage() {
+  const initialData = useLoaderData();
+  
+  // Use the same query options - automatically typed!
+  const { data } = useQuery({
+    ...exampleQueryOptions,
+    initialData, // Use loader data as initial data
+  });
+  
+  return <div>{data.message}</div>;
+}
+```
+
+### Query Benefits:
+- **Automatic caching**: Fetch once, reuse everywhere
+- **Background refetching**: Keep data fresh without user interaction
+- **Deduplication**: Multiple components requesting the same data = one network request
+- **Built-in loading/error states**: No need to manage `useState` for every fetch
+- **Optimistic updates**: Update UI instantly, roll back on error
+- **Automatic updates**: When cache is invalidated, component refetches automatically
+
+**The Full Picture**: Loader prefetches → Component uses cached data → Mutation invalidates → Component automatically refetches. All with type safety!
+
+---
+
+## ✍️ Mutations: Invalidate and Refetch
+
+**Mutations** handle data modifications (POST, PUT, DELETE) and trigger cache invalidation to keep data fresh.
+
+```typescript
+// src/features/example/hooks/useExampleMutation.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRevalidator } from 'react-router-dom';
+import { exampleQueryKey } from '../api/example.queries';
+
+export const useExampleMutation = () => {
+  const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
+
+  return useMutation({
+    mutationFn: async (data: FormData) => {
+      return await apiClient.post('/submit', data);
+    },
+    onSuccess: async (data) => {
+      // Invalidate the query - marks it as stale
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
+      
+      // Revalidate the route - re-runs the loader
+      revalidator.revalidate();
+    },
+    onError: (error) => {
+      console.error('Mutation error:', error);
+    },
+  });
+};
+```
+
+### How Invalidation Works
+
+1. **Form Submission**: User submits form
+2. **Mutation Executes**: API call completes successfully
+3. **Invalidate Query**: `invalidateQueries` marks the query as stale (data still in cache)
+4. **Revalidate Route**: `revalidator.revalidate()` re-runs the loader
+5. **Loader Prefetches**: Loader fetches fresh data
+6. **Component Refetches**: `useQuery` automatically refetches because query is stale
+7. **UI Updates**: Component displays fresh data
+
+### Mutation Benefits:
+- **Automatic cache updates**: Invalidate or update related queries
+- **Loading states**: Track submission status without manual state
+- **Error handling**: Centralized error management
+- **Retry logic**: Built-in retry on failure
+- **Integration with loaders**: Revalidate routes to prefetch fresh data
+
+---
+
+## 🔗 Complete Data Flow Example
+
+Here's a complete example showing how query options, loaders, queries, and mutations work together:
+
+### 1. Define Query Options (`example.queries.ts`)
+
+```typescript
+// src/features/example/api/example.queries.ts
+import { queryOptions } from '@tanstack/react-query';
+
+export type ExampleData = {
+  message: string;
+  count: number;
+};
+
+export const exampleQueryKey = ['exampleData'] as const;
+
+export const exampleQueryOptions = queryOptions<ExampleData>({
+  queryKey: exampleQueryKey,
+  queryFn: async () => {
+    const response = await fetch('/api/example-data');
+    return response.json();
+  },
+});
+```
+
+### 2. Prefetch in Loader (`ExamplePage.loader.ts`)
+
+```typescript
+// src/pages/ExamplePage/ExamplePage.loader.ts
+import { QueryClient } from '@tanstack/react-query';
+import { exampleQueryOptions, type ExampleData } from '../../features/example/api/example.queries';
+
+export const examplePageLoader = (queryClient: QueryClient) => {
+  return async (): Promise<ExampleData> => {
+    // Prefetch data before page renders
+    return await queryClient.ensureQueryData(exampleQueryOptions);
+  };
+};
+```
+
+### 3. Use in Component (`ExamplePage.tsx`)
+
+```typescript
+// src/pages/ExamplePage/ExamplePage.tsx
+import { useQuery } from '@tanstack/react-query';
+import { useLoaderData } from 'react-router-dom';
+import { exampleQueryOptions } from '../../features/example/api/example.queries';
+import { useExampleMutation } from '../../features/example/hooks/useExampleMutation';
+
+function ExamplePage() {
+  const initialData = useLoaderData();
+  
+  // Read from cache, subscribe to updates
+  const { data, isLoading } = useQuery({
+    ...exampleQueryOptions,
+    initialData,
+  });
+  
+  const mutation = useExampleMutation();
+  
+  const handleSubmit = (formData: FormData) => {
+    mutation.mutate(formData, {
+      onSuccess: () => {
+        // Component-specific: show toast, navigate, etc.
+        console.log('Form submitted!');
+      },
+    });
+  };
+  
+  return (
+    <div>
+      <h1>{data.message}</h1>
+      <p>Count: {data.count}</p>
+      {/* Form here */}
+    </div>
+  );
+}
+```
+
+### 4. Mutate and Invalidate (`useExampleMutation.ts`)
+
+```typescript
+// src/features/example/hooks/useExampleMutation.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRevalidator } from 'react-router-dom';
+import { exampleQueryKey } from '../api/example.queries';
+
+export const useExampleMutation = () => {
+  const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
+
+  return useMutation({
+    mutationFn: async (data: FormData) => {
+      return await fetch('/api/submit', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }).then(r => r.json());
+    },
+    onSuccess: async () => {
+      // Default behavior: Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
+      revalidator.revalidate();
+    },
+  });
+};
+```
+
+### The Complete Flow
+
+```
+User visits / (example page)
+    ↓
+Loader runs (prefetch)
+    ↓
+exampleQueryOptions.queryFn() → Fetch from API
+    ↓
+Data cached in TanStack Query
+    ↓
+Component renders with initialData
+    ↓
+useQuery subscribes to cache updates
+    ↓
+User submits form
+    ↓
+Mutation executes
+    ↓
+onSuccess: invalidateQueries + revalidate
+    ↓
+Loader re-runs → ensureQueryData fetches fresh data
+    ↓
+useQuery refetches (because invalidated)
+    ↓
+Component automatically updates with fresh data ✨
+```
+
+---
+
+## 🎯 Mutation Hook Pattern: Override `onSuccess`/`onError`
+
+### The Pattern
+
+**Define mutations in hooks** with sensible defaults (like cache invalidation), then **override in components** for specific behaviors:
+
+```typescript
+// ✅ In hook: src/features/example/hooks/useExampleMutation.ts
+import { exampleQueryKey } from '../api/example.queries';
+
+export const useExampleMutation = () => {
+  const queryClient = useQueryClient();
+  const revalidator = useRevalidator();
+
+  return useMutation({
+    mutationFn: async (data: FormData) => {
+      return await apiClient.post('/submit', data);
+    },
+    onSuccess: async (data) => {
+      // Default: Invalidate cache and revalidate route
+      await queryClient.invalidateQueries({ queryKey: exampleQueryKey });
+      revalidator.revalidate();
+    },
+    onError: (error) => {
+      // Default: Log error
+      console.error('Error:', error);
+    },
+  });
+};
+
+// ✅ In component: src/pages/ExamplePage/ExamplePage.tsx
+const mutation = useExampleMutation();
+
+const onSubmit = (data: FormData) => {
+  mutation.mutate(data, {
+    onSuccess: () => {
+      // Override: Add component-specific behavior
+      // (Default invalidation still happens first)
+      reset();  // Clear form
+      navigate('/success');  // Navigate away
+      toast.success('Saved!');  // Show notification
+    },
+    onError: (error) => {
+      // Override: Show user-friendly error
+      setErrorMessage(error.message);
+    },
+  });
+};
+```
+
+### Benefits
+
+1. **Reusability**: The same mutation hook can be used in multiple components with different success behaviors
+   ```typescript
+   // AdminPanel.tsx: Redirect to admin dashboard after cache update
+   mutation.mutate(data, { 
+     onSuccess: () => navigate('/admin') 
+   });
+   
+   // SettingsPage.tsx: Just show a toast after cache update
+   mutation.mutate(data, { 
+     onSuccess: () => toast('Updated!') 
+   });
+   
+   // Both cases: Cache is invalidated and data refetches automatically
+   ```
+
+2. **Sensible defaults**: Every mutation automatically updates the cache, even if you forget
+
+3. **Flexibility**: Each component can customize behavior without duplicating API logic
+
+4. **Testing**: Mock the mutation hook once, test component-specific behaviors separately
+
+5. **Single Source of Truth**: API endpoint and base logic defined once, used everywhere
+
+---
+
+## 🚀 Getting Started
+
+```bash
+# Install dependencies
+yarn install
+
+# Start dev server
+yarn dev
+
+# Run tests
+yarn test
+
+# Build for production
+yarn build
+```
+
+---
+
+## 📚 Tech Stack
+
+- **React 18** + **TypeScript**
+- **React Router v6** (with loaders)
+- **TanStack Query v5** (data fetching)
+- **React Hook Form** + **Yup** (form management)
+- **Vite** (build tool)
+- **Tailwind CSS** (styling)
+
+---
+
+## 🤝 Contributing
+
+1. Follow the folder structure in [STRUCTURE.md](./STRUCTURE.md)
+2. Import directly from source files (no `index.ts` barrels)
+3. Co-locate tests with components
+4. **Use query options pattern**: Centralize query definitions in `*.queries.ts` files
+5. **Use loaders for prefetching**: Use `ensureQueryData` or `fetchQuery` with query options
+6. **Use queries in components**: Reuse the same query options with `useQuery`
+7. **Define mutations in hooks**: Include default behaviors and invalidation logic
+8. **Customize in components**: Override `onSuccess`/`onError` for component-specific behavior
+
+---
+
+## 📖 Learn More
+
+- [React Router Loaders](https://reactrouter.com/en/main/route/loader)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Feature-Based Architecture](https://dev.to/profydev/screaming-architecture-evolution-of-a-react-folder-structure-4g25)

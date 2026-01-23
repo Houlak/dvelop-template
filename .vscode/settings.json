@@ -1,7 +1,9 @@
 {
   "editor.tabSize": 2,
   "editor.useTabStops": false,
-  "editor.codeActionsOnSave": { "source.organizeImports": true },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
   "[html]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[xml]": { "editor.tabSize": 2 },
   "[json]": { "editor.tabSize": 2, "editor.defaultFormatter": "esbenp.prettier-vscode" },
