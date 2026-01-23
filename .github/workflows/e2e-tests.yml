@@ -28,7 +28,7 @@ jobs:
       run: npx playwright install --with-deps chromium
 
     - name: Run E2E tests
-      run: yarn test:e2e
+      run: yarn test:e2e:local
       env:
         CI: true
         VITE_TEST_EMAIL: ${{ secrets.VITE_TEST_EMAIL }}
