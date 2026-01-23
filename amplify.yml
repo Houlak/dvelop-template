@@ -11,7 +11,7 @@ frontend:
           elif [ "${AWS_BRANCH}" = "dev" ]; then yarn run build:dev;
           else yarn run build:dev; fi;
   artifacts:
-    baseDirectory: build
+    baseDirectory: dist
     files:
       - '**/*'
   cache:
