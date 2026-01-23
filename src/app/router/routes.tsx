@@ -1,5 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import ErrorPage from '../../pages/ErrorPage/ErrorPage';
 import ExampleDetailPage from '../../pages/ExampleDetailPage/ExampleDetailPage';
 import { exampleDetailPageLoader } from '../../pages/ExampleDetailPage/ExampleDetailPage.loader';
@@ -26,6 +26,10 @@ const getRoutes = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
+              element: <Navigate to="/example" replace />,
+            },
+            {
+              path: 'example',
               element: <ExamplePage />,
               loader: examplePageLoader(queryClient),
             },
