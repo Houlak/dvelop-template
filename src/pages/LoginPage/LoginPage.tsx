@@ -32,7 +32,7 @@ function LoginPage() {
   };
 
   return (
-    <main className="min-h-[inherit] min-[block-size:inherit] grid place-items-center p-4">
+    <main className="min-h-[inherit] [min-block-size:inherit] grid place-items-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Login</CardTitle>
@@ -40,7 +40,7 @@ function LoginPage() {
         <CardContent className="flex-col gap-2">
           <LoginForm onSubmit={onSubmit} isLoading={mutation.isPending} />
           {mutation.isError && (
-            <div className="w-fullmt-4 p-3 bg-red-100 text-red-800 rounded">
+            <div className="w-full mt-4 p-3 bg-red-100 text-red-800 rounded">
               {mutation.error instanceof Error
                 ? mutation.error.message
                 : 'An error occurred during login. Please try again.'}

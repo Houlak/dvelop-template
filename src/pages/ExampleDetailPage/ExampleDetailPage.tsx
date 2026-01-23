@@ -7,7 +7,7 @@ function ExampleDetailPage() {
   const data = useLoaderData() as Awaited<ReturnType<ReturnType<typeof exampleDetailPageLoader>>>;
   
   return (
-    <main className="min-h-[inherit] min-[block-size:inherit] grid place-content-center p-8">
+    <main className="min-h-[inherit] [min-block-size:inherit] grid place-content-center p-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Link to="/">

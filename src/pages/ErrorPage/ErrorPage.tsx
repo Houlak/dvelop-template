@@ -22,7 +22,7 @@ function ErrorPage() {
   }
 
   return (
-    <main className="min-h-[inherit] min-[block-size:inherit] grid place-content-center p-4">
+    <main className="min-h-[inherit] [min-block-size:inherit] grid place-content-center p-4">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4">
           {errorStatus ? `Error ${errorStatus}` : 'Oops!'}

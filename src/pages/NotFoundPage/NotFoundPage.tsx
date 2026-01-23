@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 function NotFoundPage() {
   return (
-    <main className="min-h-[inherit] min-[block-size:inherit] grid place-content-center p-4">
+    <main className="min-h-[inherit] [min-block-size:inherit] grid place-content-center p-4">
       <div className="text-center">
         <h1 className="text-6xl font-bold mb-4">404</h1>
         <h2 className="text-2xl mb-2">Page Not Found</h2>

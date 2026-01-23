@@ -40,7 +40,7 @@ function ExamplePage() {
   };
 
   return (
-    <main className="min-h-[inherit] min-[block-size:inherit] grid place-items-center">
+    <main className="min-h-[inherit] [min-block-size:inherit] grid place-items-center">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Houlak frontend template</CardTitle>
