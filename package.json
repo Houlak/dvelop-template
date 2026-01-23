@@ -12,7 +12,12 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:dev": "env-cmd -e local playwright test",
+    "test:e2e:dev:ui": "env-cmd -e local playwright test --ui",
+    "test:e2e:dev:headed": "env-cmd -e local playwright test --headed",
+    "test:e2e:dev:debug": "env-cmd -e local playwright test --debug",
+    "test:e2e:dev:report": "env-cmd -e local playwright show-report"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
