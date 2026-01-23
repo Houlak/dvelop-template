@@ -1,3 +1,4 @@
+import { config } from '../../../app/config/env';
 import type { ApiResponse } from '../../../shared/types/api.types';
 import type { LoginRequest, LoginResponse } from './auth.types';
 
@@ -14,9 +15,14 @@ export const authApi = {
     // Mock implementation - replace with actual API call when backend is ready
     // const response = await apiClient.post<ApiResponse<LoginResponse>>('/auth/login', credentials);
     // return response.data;
-
+    // Remove this once backend is ready
+    
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    if (credentials.email !== config.testEmail || credentials.password !== config.testPassword) {
+      throw new Error('Invalid credentials');
+    }
 
     // Mock successful response
     return {
