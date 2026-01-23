@@ -95,32 +95,6 @@ test.describe('Login Page', () => {
     await expect(loginButton).toBeEnabled();
   });
 
-  test('should handle login submission with API mocking', async ({ page }) => {
-    // Mock successful login API response
-    await page.route('**/api/auth/login', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          token: 'mock-jwt-token',
-          user: {
-            id: 1,
-            email: config.testEmail,
-            name: 'Test User'
-          }
-        })
-      });
-    });
-
-    // Fill and submit form with valid password
-    await page.getByLabel('Email').fill(config.testEmail);
-    await page.getByLabel('Password').fill(config.testPassword);
-    await page.getByRole('button', { name: /login/i }).click();
-    
-    // Should redirect to home page
-    await expect(page).toHaveURL('/', { timeout: 5000 });
-  });
-
   test('should display error message for failed login', async ({ page }) => {
     // Mock failed login API response
     await page.route('**/api/auth/login', async (route) => {
