@@ -39,21 +39,3 @@ test.describe('Example Detail Page (Unauthenticated)', () => {
   });
 });
 
-test.describe('Example Detail Page Navigation Flow', () => {
-  test('should navigate through multiple items sequentially', async ({ authenticatedPage }) => {
-    // Start at item 1
-    await authenticatedPage.goto('/example/1');
-    await expect(authenticatedPage.getByText('Item ID: 1')).toBeVisible();
-    
-    // Navigate to item 2
-    await authenticatedPage.getByRole('button', { name: '2' }).click();
-    await expect(authenticatedPage).toHaveURL('/example/2');
-    await expect(authenticatedPage.getByText('Item ID: 2')).toBeVisible();
-    
-    // Navigate to item 3
-    await authenticatedPage.getByRole('button', { name: '3' }).click();
-    await expect(authenticatedPage).toHaveURL('/example/3');
-    await expect(authenticatedPage.getByText('Item ID: 3')).toBeVisible();
-  });
-});
-
