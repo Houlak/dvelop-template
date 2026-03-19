@@ -6,6 +6,8 @@ import './shared/styles/globals.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
+console.log('Hello! App is starting up.');
+
 root.render(
   <React.StrictMode>
     <App />
