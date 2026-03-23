@@ -1,58 +1,67 @@
 You are a senior software engineer. Implement the following technical specification.
 
 ## OBJECTIVE
-Add a log statement during the application startup process to aid in debugging and monitoring.
+Agregar un log en el proceso de arranque (startup) de la aplicación React para facilitar el seguimiento y diagnóstico.
 
 ## SCOPE
 ### In scope
-- Identify the appropriate startup entry point in the React application (likely src/main.tsx).
-- Add a console log or other logging mechanism to indicate the app has started.
-- Ensure the log is visible in the browser console or relevant runtime environment.
-- Follow existing code style and conventions for logging and formatting.
+- Modificar el archivo src/main.tsx donde se realiza el bootstrap de la aplicación React.
+- Agregar un log informativo que indique que la aplicación ha iniciado el proceso de arranque.
+- Asegurar que el log se ejecute al inicio antes de que la aplicación se renderice.
+- Mantener las convenciones de código y formato existentes (TypeScript, 2 espacios, printWidth 110).
 ### Out of scope
-- Adding complex logging frameworks or external monitoring integrations.
-- Changing authentication, routing, or other unrelated application logic.
-- Modifying backend services or API layers.
-- Adding or modifying tests for this logging change.
+- Cambios en la lógica de negocio o funcionalidades de la aplicación.
+- Modificaciones en otros módulos o features que no estén relacionados con el arranque.
+- Cambios en la configuración de despliegue o CI/CD.
+- Implementación de sistemas de logging avanzados o externos.
 
 ## TECHNICAL CONTEXT
-- The app is a React 18 single-page application bootstrapped with Vite.
-- The main entry point is src/main.tsx which bootstraps the React app and applies global CSS.
-- The project uses TypeScript 5 and follows strict typing conventions.
-- Logging should be consistent with existing practices and not disrupt app startup.
-- The environment may use MSW for mocking and AWS Amplify for deployment.
-- The project uses ESLint and Prettier with 2 space indentation and print width of 110.
+- La aplicación es un SPA React 18 bootstrapped con Vite, con código principal en src/main.tsx y src/App.tsx.
+- El bootstrap de la app ocurre en src/main.tsx, donde se aplica el CSS global y se invoca reportWebVitals.
+- El proyecto usa TypeScript 5, con convenciones estrictas y formateo definido en .vscode/settings.json y .prettierrc.
+- El entorno de ejecución es ESM-only con Vite 7.
+- El log debe integrarse respetando la estructura y estilo del código existente.
+- No se usa un sistema de logging externo, por lo que se recomienda usar console.log para el mensaje.
+- El log debe ser condicionalmente visible en entornos de desarrollo para evitar ruido en producción.
 
 ## CONSTRAINTS
-- Maintain existing code formatting and import organization conventions.
-- Do not introduce barrel files or break existing architectural patterns.
-- Ensure the log does not negatively impact startup performance or user experience.
-- Follow the README guidelines for code organization and conventions.
+- No introducir dependencias nuevas para logging.
+- Seguir las convenciones de formateo y organización de imports.
+- El log debe ser claro y descriptivo, indicando que la aplicación está iniciando.
+- No afectar el rendimiento ni la experiencia de usuario.
+- El cambio debe ser mínimo y localizado en src/main.tsx.
+- El log debe poder ser deshabilitado fácilmente para producción si es necesario.
 
 ## ASSUMPTIONS
-- The startup entry point is src/main.tsx as described in the README.
-- A simple console.log is sufficient for the logging requirement.
-- No additional dependencies or configuration changes are needed for logging.
-- The developer has access to modify and deploy changes to the frontend codebase.
+- El archivo src/main.tsx es el punto adecuado para agregar el log de startup.
+- El equipo acepta el uso de console.log para logs simples de diagnóstico.
+- No se requiere configuración adicional para habilitar o deshabilitar el log.
+- El entorno de desarrollo permite visualizar logs en la consola del navegador.
+- No existen mecanismos automáticos de logging que deban ser integrados o respetados.
 
 ## ACCEPTANCE CRITERIA
-- A log statement indicating app startup is present in the startup file (src/main.tsx).
-- The log appears in the browser console when the app is launched locally.
-- The change adheres to the project's formatting and import conventions.
-- No runtime errors or warnings are introduced by the logging addition.
+- Al iniciar la aplicación localmente (y en entornos de desarrollo), se muestra en consola un mensaje claro indicando que la aplicación está arrancando.
+- El mensaje de log aparece antes de que la aplicación se renderice en el DOM.
+- No se generan errores ni warnings relacionados con el log.
+- El código modificado cumple con las reglas de formateo y linting del proyecto.
+- El cambio es revisado y aprobado en el control de versiones.
+- El log no aparece en entornos de producción si se configura así (opcional).
 
 ## EXECUTION PLAN
-- Open src/main.tsx, the React app bootstrap file.
-- Add a console.log statement at the top or immediately before ReactDOM.render to indicate startup.
-- Verify the log message is clear and concise, e.g., 'App startup initiated'.
-- Run the app locally using yarn dev and confirm the log appears in the browser console.
-- Check code formatting and run linting to ensure compliance with project standards.
-- Commit the change with a descriptive message and push to the repository.
+- Abrir el archivo src/main.tsx donde se realiza el bootstrap de la aplicación.
+- Agregar una línea console.log con un mensaje descriptivo, por ejemplo: 'App startup: iniciando aplicación'.
+- Colocar el log al inicio del archivo, antes de la llamada a ReactDOM.createRoot o render.
+- Verificar que el mensaje se muestre correctamente al iniciar la app en entorno local.
+- Ejecutar linters y formateadores para asegurar cumplimiento de convenciones.
+- Realizar pruebas básicas de arranque para confirmar que no hay impactos negativos.
+- Documentar el cambio en el commit con un mensaje claro.
+- Opcional: agregar lógica para que el log solo aparezca en entornos de desarrollo (por ejemplo, usando import.meta.env.MODE).
 
 ## RISK AREAS
-- Potential for the log to be missed if placed incorrectly or if console output is suppressed.
-- Minor risk of impacting startup timing if logging is done excessively or synchronously.
-- Risk of breaking import or formatting conventions if not carefully applied.
+- Agregar el log en un lugar incorrecto que pueda afectar el flujo de arranque.
+- Generar ruido excesivo en consola en producción si no se controla adecuadamente.
+- Romper convenciones de código o formateo que provoquen fallos en CI.
+- Olvidar validar que el log no impacta el rendimiento o la experiencia de usuario.
 
 ## OUTPUT REQUIREMENTS
 - Produce working code (no pseudocode)
