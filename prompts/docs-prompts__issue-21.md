@@ -6,62 +6,78 @@ You are a senior software engineer. Implement issue #21 in `houlak/dvelop-templa
 - **Observed current state:** `Hello world` exists in `README.md` directly under the main title.
 
 ## OBJECTIVE
-Remove placeholder text `Hello world` from Markdown documentation while preserving the project’s current documentation structure and all React 18 + TypeScript architecture conventions.
+Generate a detailed prompt to implement issue #21 in the houlak/dvelop-template React 18 + TypeScript project, ensuring alignment with the existing architecture, conventions, and constraints.
 
 ## SCOPE
 ### In scope
-- Remove the `Hello world` placeholder text from Markdown docs relevant to issue #21.
-- Verify whether `Hello world` appears in any other `*.md` files and clean up unintended occurrences.
-- Keep documentation coherent after removal (no awkward blank sections or broken formatting).
-- Keep changes minimal and focused on issue #21.
-
+- Understanding the project architecture and conventions as described in the README
+- Identifying relevant modules and files to modify or extend for issue #21
+- Ensuring new code respects feature-based layering, protected routing, and query options patterns
+- Incorporating state management with Zustand and form validation with React Hook Form + Yup if applicable
+- Following UI styling and component usage guidelines with Tailwind CSS v4 and Base UI primitives
+- Maintaining error handling and API mocking strategies consistent with existing patterns
+- Adhering to testing conventions for E2E and potential unit/component tests
+- Respecting constraints such as no barrel files and single source of query options
+- Preparing acceptance criteria and execution steps for the implementation
 ### Out of scope
-- Any React feature implementation, refactor, or UI changes.
-- Route, loader, auth, query, store, form, or API behavior changes.
-- CI/CD, build config, dependency updates, or unrelated documentation rewrites.
+- Changing the overall tech stack or architecture
+- Implementing unrelated features or refactoring unrelated modules
+- Modifying deployment pipelines or environment configurations unless directly related to issue #21
+- Adding new third-party dependencies without justification
+- Writing the actual code or tests beyond the prompt generation
 
 ## TECHNICAL CONTEXT
-- The app uses React 18 + TypeScript strict mode with feature-based architecture.
-- Protected routing uses `ProtectedLayout` + `requireAuthLoader`.
-- Data flow uses TanStack Query v5 `queryOptions` factories.
-- Auth is persisted with Zustand in `src/features/auth/store/auth.store.ts`.
-- Forms use React Hook Form + Yup.
-- UI uses shared primitives in `src/shared/components/ui` with Tailwind CSS v4.
-- Axios + centralized interceptors are in `src/shared/services/api/client.ts`.
-
-For this issue, treat the above as **non-regression constraints**: no behavior or architecture changes are expected because this is a documentation-only fix.
+- React 18 with TypeScript in strict mode
+- Feature-based architecture with src/features, src/pages, src/shared directories
+- React Router v6 with loaders for data prefetching
+- TanStack Query v5 for data fetching and caching with single source queryOptions
+- Zustand persisted store for authentication state management
+- React Hook Form and Yup for forms and validation
+- Tailwind CSS v4 and Base UI primitives for UI components
+- Axios instance with response interceptor for API calls
+- Optional MSW for API mocking enabled via VITE_USE_MOCKS
+- Playwright for E2E testing with environment variables for credentials
+- No barrel files; direct imports only
+- Protected routes grouped under ProtectedLayout with requireAuthLoader
 
 ## CONSTRAINTS
-- Keep the change minimal, targeted, and documentation-only.
-- Do not introduce barrel files or alter import paths.
-- Do not modify routing, loaders, query options, auth store, or API client behavior.
-- Preserve existing README structure and heading hierarchy.
-- Avoid rewording large unrelated sections.
+- No barrel files allowed; import directly from concrete files
+- Query options must be defined once and reused for type safety
+- All protected routes must use requireAuthLoader and ProtectedLayout
+- Auth mocks validate against environment variables and simulate latency
+- Centralize 401 error handling in Axios interceptor in client.ts
+- Use shared UI primitives and Tailwind tokens; avoid ad-hoc CSS
+- Persist auth state with useAuthStore and clear with clearAuth()
+- Co-locate tests next to source files; prefer semantic selectors in Playwright
+- Follow naming conventions for pages, hooks, and components
+- Respect existing directory layout and import aliases
 
 ## ASSUMPTIONS
-- The placeholder text mentioned in issue #21 is unintentional and should be removed.
-- `README.md` is the primary impacted file.
-- If additional `Hello world` Markdown occurrences exist, only remove those that are clearly placeholder content.
+- Issue #21 relates to a feature or enhancement within the existing React + TypeScript template
+- The implementer has access to the full repository and environment variables
+- The existing architecture and conventions are to be strictly followed
+- Testing and deployment pipelines are already configured and do not require modification
+- MSW mocking can be enabled if needed for development or testing
+- The prompt will guide an AI assistant or developer to implement the issue correctly
 
 ## ACCEPTANCE CRITERIA
-- `Hello world` placeholder text is removed from `README.md`.
-- Markdown formatting remains valid and readable after the change.
-- No unrelated code or architecture files are modified.
-- A repository-wide search confirms no unintended `Hello world` placeholder remains in Markdown files.
-- Diff is minimal and directly traceable to issue #21.
+- A clear and comprehensive prompt is generated describing the implementation task for issue #21
+- The prompt references relevant modules, files, and architectural patterns to be used
+- Constraints and conventions are explicitly stated to avoid deviation
+- The prompt includes guidance on testing and validation of the implemented feature
+- The prompt is actionable and enables safe extension of the project without breaking existing functionality
 
 ## EXECUTION PLAN
-1. Review issue #21 details and confirm expected behavior (documentation cleanup only).
-2. Search repository Markdown files for `Hello world` occurrences.
-3. Edit `README.md` to remove the placeholder line.
-4. Re-run search to verify cleanup.
-5. Review diff to ensure only intended Markdown changes were made.
-6. Provide a concise summary of modified file(s) and verification performed.
+- Review the issue #21 description and requirements in detail
+- Analyze the README and project context to identify relevant architecture and modules
+- Map out which features, pages, or shared components are affected or need extension
+- Draft the prompt including objective, scope, technical context, constraints, and assumptions
+- Define acceptance criteria to validate the implementation
+- Outline step-by-step instructions or considerations for the implementer or AI assistant
+- Include any risk areas or potential challenges if applicable
+- Validate the prompt for completeness and clarity before delivery
 
 ## RISK AREAS
-- Removing text from the wrong file or section.
-- Leaving additional placeholder text behind in other Markdown files.
-- Introducing unnecessary formatting churn in README.
 
 ## OUTPUT REQUIREMENTS
 - Produce working changes (no pseudocode).
