@@ -1,79 +1,75 @@
-You are a senior software engineer. Implement the following technical specification.
+You are a senior software engineer. Implement issue #26 in `houlak/dvelop-template`.
+
+## ISSUE REFERENCE
+- Issue: https://github.com/Houlak/dvelop-template/issues/26
+- Title: `Remove Hello world from md`
+- Body: `Remove Hello world from md`
 
 ## OBJECTIVE
-Generate a detailed prompt to implement the issue #26 in the houlak/dvelop-template repository, ensuring alignment with the existing architecture, conventions, and tech stack.
+Remove the placeholder `Hello world` text from Markdown documentation while preserving the existing documentation structure and project conventions.
+
+## PROJECT CONTEXT TO RESPECT
+- Stack: React 18 + TypeScript (strict), React Router v6 loaders, TanStack Query v5, Zustand, React Hook Form + Yup, Tailwind CSS v4, Base UI, Axios, optional MSW, Playwright.
+- Architecture: feature-based layering with `src/app`, `src/features`, `src/pages`, `src/shared`.
+- Conventions: no barrel files, direct imports only, centralized query options, protected route pattern with `ProtectedLayout` + `requireAuthLoader`.
+- Testing conventions: Playwright E2E with semantic selectors; co-located tests for unit/component tests.
 
 ## SCOPE
 ### In scope
-- Understanding the current project architecture and conventions as described in the README.
-- Leveraging React 18 + TypeScript with React Router v6 loaders and TanStack Query v5.
-- Following the feature-based layering and protected routing patterns.
-- Using Zustand for auth state management and React Hook Form + Yup for forms and validation.
-- Incorporating UI components from the shared UI primitives with Tailwind CSS v4 and Base UI.
-- Ensuring API integration and mocking follow existing patterns with Axios and MSW.
-- Adhering to testing conventions using Playwright for E2E tests and co-located unit/component tests.
-- Respecting constraints such as no barrel files, single source query options, and centralized error handling.
+- Update Markdown docs relevant to issue #26, starting with [`README.md`](/Users/fede/Projects/houlak/alakai/workers/tmp/implement-OhABAq/README.md).
+- Remove only unintended placeholder text `Hello world` from docs.
+- Keep documentation readable and consistent after removal.
+
 ### Out of scope
-- Changing the core tech stack or architecture.
-- Implementing unrelated features or modules outside the scope of issue #26.
-- Modifying deployment configurations unless directly related to the issue.
-- Altering environment variable management beyond what is necessary for the issue.
+- Any runtime/app behavior changes (routing, auth, API, UI components, state, mocks, loaders).
+- Refactors unrelated to this doc cleanup.
+- Dependency, CI/CD, or environment variable changes.
 
-## TECHNICAL CONTEXT
-- React 18 + TypeScript with strict mode enabled.
-- React Router v6 with loaders for data prefetching.
-- TanStack Query v5 for data fetching and caching with a shared QueryClient.
-- Zustand persisted store for authentication state management.
-- React Hook Form combined with Yup for form handling and validation.
-- Tailwind CSS v4 with Base UI components inspired by Shadcn UI.
-- Axios instance configured with environment variables and centralized error handling.
-- Mock Service Worker (MSW) support enabled conditionally via environment variables.
-- Playwright for end-to-end testing with authenticated fixtures and semantic selectors.
-- Project structure with feature-based layering and no barrel file imports.
-
-## CONSTRAINTS
-- No barrel files allowed; imports must be direct to avoid circular dependencies and improve tree-shaking.
-- Query options must be defined once and reused to maintain type safety.
-- Protected routes must be wrapped with ProtectedLayout and use requireAuthLoader for authentication enforcement.
-- Auth mocks validate against environment-configured credentials and simulate latency; updates must propagate to E2E fixtures.
-- Centralized 401 error handling must be implemented in the Axios client interceptor.
-- UI styling must reuse shared primitives and Tailwind tokens; avoid ad-hoc CSS unless extending the design system.
-- State persistence for auth must use clearAuth() to keep localStorage and state in sync.
-- Testing must follow co-location and semantic selector conventions.
-
-## ASSUMPTIONS
-- Issue #26 relates to a feature or fix that fits within the existing architecture and tech stack.
-- The developer has access to environment variables and can configure them as needed.
-- MSW mocking can be enabled if required by the implementation.
-- The existing queryOptions factories and loaders can be extended or reused.
-- E2E tests will be updated or added to cover new or changed functionality.
-- No breaking changes to existing APIs or user flows are introduced.
-
-## ACCEPTANCE CRITERIA
-- A clear and detailed prompt is generated that guides the implementation of issue #26.
-- The prompt references relevant architectural patterns, tech stack details, and coding conventions.
-- The prompt includes instructions on how to handle routing, state management, API integration, and UI composition.
-- Testing strategies and requirements are outlined to ensure coverage and maintainability.
-- Constraints and assumptions are explicitly stated to avoid scope creep or architectural violations.
-- The prompt enables safe extension of the project without introducing regressions.
+## IMPLEMENTATION INSTRUCTIONS
+1. Inspect Markdown files for the exact placeholder text `Hello world`.
+2. Remove the placeholder occurrence(s) that are clearly unintended documentation filler.
+3. Preserve surrounding headings, spacing, and markdown formatting.
+4. Keep the diff minimal and focused only on issue #26.
+5. Do not touch source files outside docs unless strictly required (it is not expected here).
 
 ## EXECUTION PLAN
-- Review the README and project context to fully understand the architecture and conventions.
-- Analyze the specifics of issue #26 to identify required changes and affected modules.
-- Map the issue requirements to existing patterns such as feature-based layering, loaders, and queryOptions.
-- Draft the prompt including objective, scope, technical context, constraints, assumptions, and acceptance criteria.
-- Include detailed guidance on routing, state management, API mocking, UI components, and testing.
-- Validate the prompt against the project’s constraints and conventions to ensure compliance.
-- Deliver the prompt for use by developers or AI assistants to implement the issue.
+1. Review issue #26 and confirm expected behavior: remove placeholder text from markdown docs.
+2. Review current README introduction to avoid changing unrelated content.
+3. Apply a minimal documentation-only edit.
+4. Run targeted validation commands for markdown content and diff scope.
+5. Deliver a short implementation summary with validation outcomes.
+
+## VALIDATION
+Run the following checks:
+- `rg -n "^Hello world$" README.md` (should return no results)
+- `rg -n "Hello world" -g '*.md' --glob '!prompts/**'` (optional repo-wide docs check)
+- Confirm no unintended formatting regressions in updated markdown file(s).
+- Confirm git diff is minimal and scoped to this issue.
+
+## CONSTRAINTS
+- Produce working code only (no pseudocode).
+- Do not introduce barrel files or architectural changes.
+- Follow existing naming/layout conventions.
+- Add tests only if appropriate; for this docs-only change, tests are typically not required.
+
+## ASSUMPTIONS
+- Issue #26 targets documentation cleanup only and does not require functional code changes.
+- The intended `md` file is [`README.md`](/Users/fede/Projects/houlak/alakai/workers/tmp/implement-OhABAq/README.md), where the placeholder appears.
+- Existing architecture and tech stack constraints remain unchanged.
 
 ## RISK AREAS
-- Misalignment with existing architectural patterns leading to integration issues.
-- Overlooking constraints such as no barrel files or centralized error handling.
-- Insufficient testing coverage causing regressions or undetected bugs.
-- Incorrect assumptions about environment variables or mocking capabilities.
-- Ambiguities in the prompt that could lead to inconsistent implementations.
+- Removing text too broadly (for example, deleting intentional examples instead of only placeholder content).
+- Introducing accidental markdown formatting regressions near the edited section.
+- Expanding scope into application code changes unrelated to the issue.
 
-## OUTPUT REQUIREMENTS
-- Produce working code (no pseudocode)
-- Keep changes minimal and aligned to existing architecture
-- Add/adjust unit tests where appropriate
+## ACCEPTANCE CRITERIA
+- `Hello world` placeholder is removed from Markdown docs relevant to issue #26.
+- Documentation remains well-structured and readable.
+- Change set is minimal and does not alter application behavior.
+- Implementation aligns with repository conventions and constraints.
+
+## OUTPUT FORMAT
+Return:
+1. Files changed.
+2. Exact summary of what was removed/updated.
+3. Validation commands executed and their outcomes.
