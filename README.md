@@ -1,5 +1,7 @@
 # React Frontend Template
 
+<!-- This repository is a starter template for building production-ready React applications with a scalable feature-based architecture. -->
+
 Hello world
 
 A production-ready React template built with TypeScript, React Router, TanStack Query, and feature-based architecture.
