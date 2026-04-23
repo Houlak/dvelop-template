@@ -1,16 +1,16 @@
 You are a senior software engineer. Implement the following technical specification.
 
 ## OBJECTIVE
-Remove all occurrences of 'Hello world' from markdown documentation files in the repository.
+Remove all occurrences of '' from markdown documentation files in the repository.
 
 ## SCOPE
 ### In scope
 - Locate all markdown (.md) files in the repository
-- Identify and remove all instances of the exact phrase 'Hello world' from these markdown files
+- Identify and remove all instances of the exact phrase '' from these markdown files
 - Ensure no other content is altered or removed
-- Commit changes with a clear message indicating removal of 'Hello world' from markdown docs
+- Commit changes with a clear message indicating removal of '' from markdown docs
 ### Out of scope
-- Removing 'Hello world' from non-markdown files
+- Removing '' from non-markdown files
 - Refactoring or modifying any code or non-markdown documentation
 - Adding or modifying tests
 - Changing project configuration or build scripts
@@ -23,31 +23,31 @@ Remove all occurrences of 'Hello world' from markdown documentation files in the
 - The project uses Git for version control
 
 ## CONSTRAINTS
-- Do not modify any content other than removing 'Hello world' occurrences
+- Do not modify any content other than removing '' occurrences
 - Maintain the original formatting and structure of markdown files
 - Ensure that the removal does not break markdown syntax or links
 - Follow repository conventions for commits and code changes
 
 ## ASSUMPTIONS
 - All markdown files are UTF-8 encoded and accessible
-- The phrase 'Hello world' appears exactly as is (case sensitive) and should be removed wherever found
+- The phrase '' appears exactly as is (case sensitive) and should be removed wherever found
 - No automated tests are required for this task
 - The repository has no special tooling that automatically regenerates markdown files
 
 ## ACCEPTANCE CRITERIA
-- All markdown files contain no instances of the phrase 'Hello world'
+- All markdown files contain no instances of the phrase ''
 - No other content in markdown files is changed
 - Changes are committed with a descriptive commit message
 - No markdown syntax errors are introduced by the removals
 
 ## EXECUTION PLAN
 - Search the repository for all files with the .md extension
-- For each markdown file, scan for occurrences of the exact phrase 'Hello world'
-- Remove all occurrences of 'Hello world' from the file content
+- For each markdown file, scan for occurrences of the exact phrase ''
+- Remove all occurrences of '' from the file content
 - Verify that the markdown file remains valid and well-formed after removal
 - Repeat for all markdown files containing the phrase
 - Test locally by previewing markdown files to ensure no formatting issues
-- Commit all changes with a message such as 'Remove all Hello world occurrences from markdown docs'
+- Commit all changes with a message such as 'Remove all  occurrences from markdown docs'
 - Push changes to the repository
 
 ## RISK AREAS
