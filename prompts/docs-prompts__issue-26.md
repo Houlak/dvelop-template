@@ -2,11 +2,11 @@ You are a senior software engineer. Implement issue #26 in `houlak/dvelop-templa
 
 ## ISSUE REFERENCE
 - Issue: https://github.com/Houlak/dvelop-template/issues/26
-- Title: `Remove Hello world from md`
-- Body: `Remove Hello world from md`
+- Title: `Remove  from md`
+- Body: `Remove  from md`
 
 ## OBJECTIVE
-Remove the placeholder `Hello world` text from Markdown documentation while preserving the existing documentation structure and project conventions.
+Remove the placeholder `` text from Markdown documentation while preserving the existing documentation structure and project conventions.
 
 ## PROJECT CONTEXT TO RESPECT
 - Stack: React 18 + TypeScript (strict), React Router v6 loaders, TanStack Query v5, Zustand, React Hook Form + Yup, Tailwind CSS v4, Base UI, Axios, optional MSW, Playwright.
@@ -17,7 +17,7 @@ Remove the placeholder `Hello world` text from Markdown documentation while pres
 ## SCOPE
 ### In scope
 - Update Markdown docs relevant to issue #26, starting with [`README.md`](/Users/fede/Projects/houlak/alakai/workers/tmp/implement-OhABAq/README.md).
-- Remove only unintended placeholder text `Hello world` from docs.
+- Remove only unintended placeholder text `` from docs.
 - Keep documentation readable and consistent after removal.
 
 ### Out of scope
@@ -26,7 +26,7 @@ Remove the placeholder `Hello world` text from Markdown documentation while pres
 - Dependency, CI/CD, or environment variable changes.
 
 ## IMPLEMENTATION INSTRUCTIONS
-1. Inspect Markdown files for the exact placeholder text `Hello world`.
+1. Inspect Markdown files for the exact placeholder text ``.
 2. Remove the placeholder occurrence(s) that are clearly unintended documentation filler.
 3. Preserve surrounding headings, spacing, and markdown formatting.
 4. Keep the diff minimal and focused only on issue #26.
@@ -41,8 +41,8 @@ Remove the placeholder `Hello world` text from Markdown documentation while pres
 
 ## VALIDATION
 Run the following checks:
-- `rg -n "^Hello world$" README.md` (should return no results)
-- `rg -n "Hello world" -g '*.md' --glob '!prompts/**'` (optional repo-wide docs check)
+- `rg -n "^$" README.md` (should return no results)
+- `rg -n "" -g '*.md' --glob '!prompts/**'` (optional repo-wide docs check)
 - Confirm no unintended formatting regressions in updated markdown file(s).
 - Confirm git diff is minimal and scoped to this issue.
 
@@ -63,7 +63,7 @@ Run the following checks:
 - Expanding scope into application code changes unrelated to the issue.
 
 ## ACCEPTANCE CRITERIA
-- `Hello world` placeholder is removed from Markdown docs relevant to issue #26.
+- `` placeholder is removed from Markdown docs relevant to issue #26.
 - Documentation remains well-structured and readable.
 - Change set is minimal and does not alter application behavior.
 - Implementation aligns with repository conventions and constraints.
