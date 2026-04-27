@@ -22,8 +22,8 @@ export const test = base.extend<AuthFixtures>({
     // Submit the form
     await page.getByRole('button', { name: /login|sign in/i }).click();
     
-    // Wait for successful login and redirect
-    await page.waitForURL('/', { timeout: 5000 });
+    // Wait for successful login and redirect to protected route
+    await page.waitForURL(/\/example$/, { timeout: 5000 });
     
     // Use the authenticated page in tests
     await use(page);
@@ -31,4 +31,3 @@ export const test = base.extend<AuthFixtures>({
 });
 
 export { expect } from '@playwright/test';
-

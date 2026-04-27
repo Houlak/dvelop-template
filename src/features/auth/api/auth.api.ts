@@ -1,4 +1,4 @@
-import { config } from '../../../app/config/env';
+import apiClient from '../../../shared/services/api/client';
 import type { ApiResponse } from '../../../shared/types/api.types';
 import type { LoginRequest, LoginResponse } from './auth.types';
 
@@ -9,38 +9,15 @@ import type { LoginRequest, LoginResponse } from './auth.types';
 export const authApi = {
   /**
    * Login user with email and password
-   * Returns mocked logged in data for now
+   * Uses shared API client so backend and MSW mocks behave consistently
    */
   login: async (credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
-    // Mock implementation - replace with actual API call when backend is ready
-    // const response = await apiClient.post<ApiResponse<LoginResponse>>('/auth/login', credentials);
-    // return response.data;
-    // Remove this once backend is ready
-    
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    if (credentials.email !== config.testEmail || credentials.password !== config.testPassword) {
-      throw new Error('Invalid credentials');
-    }
-
-    // Mock successful response
-    return {
-      data: {
-        user: {
-          id: '1',
-          email: credentials.email,
-          name: credentials.email.split('@')[0],
-        },
-        token: 'mock-jwt-token-' + Date.now(),
-        expiresIn: 3600,
+    const response = await apiClient.post<ApiResponse<LoginResponse>>('/api/auth/login', credentials, {
+      headers: {
+        'x-skip-auth-redirect': 'true',
       },
-      result: true,
-      errorCode: 0,
-      message: 'Login successful',
-      showMessage: null,
-      needUpdate: false,
-    };
+    });
+
+    return response.data;
   },
 };
-
