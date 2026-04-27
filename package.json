@@ -32,7 +32,10 @@
     "test:e2e:prod:ui": "env-cmd -e prod playwright test --ui",
     "test:e2e:prod:headed": "env-cmd -e prod playwright test --headed",
     "test:e2e:prod:debug": "env-cmd -e prod playwright test --debug",
-    "test:e2e:prod:report": "env-cmd -e prod playwright show-report"
+    "test:e2e:prod:report": "env-cmd -e prod playwright show-report",
+    "test:smoke:branch-naming": "node scripts/branch-name-smoke-check.mjs",
+    "test:smoke:branch-naming:strict": "node scripts/branch-name-smoke-check.mjs --strict",
+    "test:unit:branch-naming": "node --test scripts/branchNamingRules.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",
