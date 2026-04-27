@@ -469,6 +469,9 @@ yarn dev
 # Run tests
 yarn test
 
+# Run branch naming smoke test (CI/CD trigger compatibility)
+yarn smoke:branch-naming
+
 # Build for production
 yarn build
 ```
