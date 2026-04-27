@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { config } from '../../../app/config/env';
+import { useAuthStore } from '../../../features/auth/store/auth.store';
 import { ApiResponse } from '../../types/api.types';
 
 const instance: AxiosInstance = axios.create({
@@ -19,7 +20,21 @@ const onRejectedApiResponse = (error: AxiosError<ApiResponse>) => {
     // Request was made, server responded with status code > 2xx
 
     if (error.response.status === 401) {
-      // Add logout logic
+      const shouldSkipRedirect = error.config?.headers?.['x-skip-auth-redirect'] === 'true';
+
+      if (!shouldSkipRedirect) {
+        useAuthStore.getState().clearAuth();
+
+        if (typeof window !== 'undefined') {
+          const currentPath = `${window.location.pathname}${window.location.search}`;
+          const redirectParam = encodeURIComponent(currentPath);
+          const targetLoginPath = `/login?redirect=${redirectParam}`;
+
+          if (!window.location.pathname.startsWith('/login')) {
+            window.location.assign(targetLoginPath);
+          }
+        }
+      }
     }
 
     return Promise.reject(getApiResponseMessage(error.response.data) || error.message);
@@ -37,4 +52,3 @@ const onRejectedApiResponse = (error: AxiosError<ApiResponse>) => {
 instance.interceptors.response.use((response) => response, onRejectedApiResponse);
 
 export default instance;
-
