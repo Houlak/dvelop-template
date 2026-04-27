@@ -1,77 +1,80 @@
 You are a senior software engineer. Implement the following technical specification.
 
 ## OBJECTIVE
-Perform a smoke test to verify the creation of a pull request and the creation of a route file prompts/docs-prompts__issue-<n>.md in the repository Houlak/dvelop-template.
+Perform a smoke test to verify the creation of a pull request (PR) and the creation of a route file prompts/docs-prompts__issue-<n>.md in the repository houlak/dvelop-template.
 
 ## SCOPE
 ### In scope
-- Create a new route file prompts/docs-prompts__issue-<n>.md
-- Create a pull request for the new route file
-- Verify that the route creation and PR creation processes work as expected
-- Follow repository conventions for routing and pull request creation
+- Create a new route file under prompts/docs-prompts__issue-<n>.md
+- Create a pull request to add the new route file
+- Verify that the PR creation process works correctly
+- Verify that the route file is created with the correct naming convention
+- Ensure the route is wired correctly in the router configuration
 ### Out of scope
-- Implementing new features beyond route creation
-- Modifying existing business logic or UI components
-- Extensive testing beyond smoke test scope
-- Changes to CI/CD pipelines or deployment configurations
+- Implementing new feature functionality beyond route creation
+- Modifying existing business logic or API services
+- Writing unit or integration tests beyond the smoke test
+- Changing authentication or authorization flows
+- Adjusting styling or UI components
 
 ## TECHNICAL CONTEXT
-- React 18 + TypeScript with feature-based architecture
-- Routing managed by React Router v6 with loaders in src/app/router/routes.tsx
-- Use of TanStack Query v5 for data fetching and caching
-- Authentication enforced via Zustand persisted store and requireAuthLoader
+- React 18 + TypeScript with strict mode
+- React Router v6 with loaders for routing
+- TanStack Query v5 for data fetching and caching
+- Zustand persisted auth store for authentication state
 - Route files follow the pattern FeaturePage/FeaturePage.tsx + FeaturePage.loader.ts
-- No barrel files; import components and utilities directly
-- Pull requests created according to repository guidelines
-- Environment variables managed via .env-cmdrc.json and Vite env variables
-- MSW mocking optionally enabled with VITE_USE_MOCKS=true
-- Testing conventions include Playwright for E2E tests located in e2e/
+- Routes are defined centrally in src/app/router/routes.tsx
+- Protected routes are grouped under ProtectedLayout and use requireAuthLoader
+- No barrel files allowed; import files directly
+- PR creation and route file naming must follow conventions
+- MSW mocking can be enabled with VITE_USE_MOCKS=true
+- Use existing queryClient instance when adding loaders
+- Environment variables managed via .env-cmdrc.json and Vite env
 
 ## CONSTRAINTS
-- No barrel files allowed; imports must be direct
-- Protected routes must be grouped inside ProtectedLayout and use requireAuthLoader
-- Query options must be defined once and reused for loaders and components
-- Auth mocks validate against environment-configured credentials
-- 401 error handling centralized in Axios client interceptor
-- Route files must follow naming conventions and directory layout
-- Pull request creation must follow repository and GitHub workflow conventions
-- Smoke test scope limited to route and PR creation verification
+- No barrel files; import route files directly
+- Route files must follow naming conventions
+- Protected routes require authentication loader cooperation
+- PR creation must integrate with existing repo workflows
+- Route file must be created under prompts/docs-prompts__issue-<n>.md
+- Follow existing architectural layering and routing conventions
+- Use existing queryOptions and loaders patterns for data fetching
+- Maintain consistency with existing state management and auth flow
 
 ## ASSUMPTIONS
-- The repository is set up with the described architecture and conventions
-- Environment variables for testing (VITE_TEST_EMAIL, VITE_TEST_PASSWORD) are configured
-- Developer has access rights to create branches and pull requests in the repository
-- The CI/CD pipeline and GitHub Actions are configured to run on PR creation
-- The route creation process involves adding entries to src/app/router/routes.tsx
-- The smoke test environment has the necessary dependencies installed
-- MSW mocking can be enabled if needed for testing
+- The repository uses React Router v6 with loaders as described
+- The PR creation process is automated or semi-automated and can be triggered
+- The environment variables for testing and auth are properly configured
+- The route file naming pattern is strictly followed
+- The smoke test will be run in a local or CI environment with access to the repo
+- The existing router configuration can be extended safely
+- The user has permissions to create branches and PRs in the repository
 
 ## ACCEPTANCE CRITERIA
-- A new route file prompts/docs-prompts__issue-<n>.md is created following repository conventions
-- A pull request is successfully created containing the new route file
-- The pull request passes initial CI checks without errors
-- The new route is accessible and does not break existing routes
-- The smoke test verifies that the PR and route creation process completes without failures
+- A new route file prompts/docs-prompts__issue-<n>.md is created following naming conventions
+- A pull request is successfully created to add the new route file
+- The PR passes basic validation checks (e.g., CI pipelines triggered)
+- The new route is correctly wired in src/app/router/routes.tsx
+- The route is accessible and does not break existing routing
+- The smoke test verifies that the PR and route creation process completes without errors
 
 ## EXECUTION PLAN
-- Create a new branch from the main development branch
-- Add a new route file prompts/docs-prompts__issue-<n>.md following naming and directory conventions
-- Update src/app/router/routes.tsx to include the new route if applicable
-- Ensure the new route uses requireAuthLoader if it is protected
-- Test locally to verify the route loads without errors
-- Commit changes with a descriptive message referencing the issue
+- Identify the issue number <n> to use in the route file name
+- Create the new route file prompts/docs-prompts__issue-<n>.md with minimal content
+- Add the new route entry in src/app/router/routes.tsx under the appropriate layout
+- Commit the changes to a new branch named appropriately for the issue
 - Push the branch to the remote repository
 - Create a pull request targeting the main development branch
-- Verify that the pull request triggers CI workflows and passes smoke tests
-- Review the pull request to ensure compliance with repository guidelines
-- Merge the pull request upon successful verification
+- Verify that the PR creation triggers CI pipelines and passes initial checks
+- Manually or automatically test that the new route is accessible and does not cause errors
+- Confirm that the PR and route creation process completes successfully as a smoke test
 
 ## RISK AREAS
-- Incorrect route file naming or placement causing routing errors
-- Failure to update router configuration leading to inaccessible routes
-- Authentication loader misconfiguration causing unauthorized access issues
-- CI pipeline failures due to environment or configuration mismatches
-- Pull request creation errors due to permission or branch conflicts
+- Incorrect route file naming causing routing or import errors
+- Failure to wire the route correctly in the router configuration
+- PR creation failing due to permission or branch conflicts
+- CI pipelines failing due to missing dependencies or configuration
+- Authentication loader blocking access if route is protected without proper setup
 
 ## OUTPUT REQUIREMENTS
 - Produce working code (no pseudocode)
