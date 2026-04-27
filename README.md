@@ -494,6 +494,7 @@ yarn build
 6. **Use queries in components**: Reuse the same query options with `useQuery`
 7. **Define mutations in hooks**: Include default behaviors and invalidation logic
 8. **Customize in components**: Override `onSuccess`/`onError` for component-specific behavior
+9. Follow branch naming policy in [docs/branch-naming-policy.md](./docs/branch-naming-policy.md)
 
 ---
 

@@ -89,6 +89,7 @@ This repository provides a production-ready React 18 + TypeScript template cente
 7. **CI/CD**:
    - `.github/workflows/e2e-tests.yml` runs Playwright on pushes/PRs to `main` and `develop`, uploading reports and screenshots on failure.
    - Example build workflow (`build-react-frontend-template.yml.example`) illustrates environment-specific builds.
+   - Branch naming conventions and smoke-test commands are documented in `docs/branch-naming-policy.md`.
 8. **Formatting & IDE support**: Prettier configuration (`printWidth: 110`, `singleQuote: true`); `.vscode/settings.json` enforces import organization and consistent formatting.
 
 ## Important Constraints & Guidelines
