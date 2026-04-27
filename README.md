@@ -1,3 +1,4 @@
+<!-- Purpose: This repository is a starter template for production-ready React applications with a scalable feature-based architecture. -->
 # React Frontend Template
 
 Hello world
