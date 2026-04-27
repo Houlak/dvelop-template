@@ -34,6 +34,15 @@ This template follows a **feature-based architecture** with clear separation of 
 
 ---
 
+## 🌿 Branch Naming Smoke Test
+
+Branch naming conventions and the smoke-check workflow are documented in [docs/branch-naming.md](./docs/branch-naming.md).
+
+Quick commands:
+
+- `yarn test:smoke:branch-naming` (informational)
+- `yarn test:smoke:branch-naming:strict` (fails on violations)
+
 ## 🛣️ Routing System
 
 We use **React Router v6** with **loaders** and **TanStack Query** for data management.
