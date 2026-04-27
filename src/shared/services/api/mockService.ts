@@ -1,5 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { setupWorker } from 'msw/browser';
+import { config } from '../../../app/config/env';
+import type { ApiResponse } from '../../types/api.types';
 
 type User = {
   id: number;
@@ -14,6 +16,21 @@ type Post = {
   authorId: number;
 };
 
+type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+type LoginResponse = {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+  token: string;
+  expiresIn: number;
+};
+
 export const mockData = {
   users: [
     { id: 1, name: 'John Doe', email: 'john@example.com' },
@@ -26,6 +43,48 @@ export const mockData = {
 };
 
 export const handlers = [
+  http.post('/api/auth/login', async ({ request }) => {
+    const credentials = (await request.json()) as LoginRequest;
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    if (credentials.email !== config.testEmail || credentials.password !== config.testPassword) {
+      const errorResponse: ApiResponse<null> = {
+        data: null,
+        result: false,
+        errorCode: 401,
+        message: 'Invalid credentials',
+        showMessage: 'Invalid credentials',
+        needUpdate: false,
+      };
+
+      return HttpResponse.json(errorResponse, { status: 401 });
+    }
+
+    const successResponse: ApiResponse<LoginResponse> = {
+      data: {
+        user: {
+          id: '1',
+          email: credentials.email,
+          name: credentials.email.split('@')[0],
+        },
+        token: `mock-jwt-token-${Date.now()}`,
+        expiresIn: 3600,
+      },
+      result: true,
+      errorCode: 0,
+      message: 'Login successful',
+      showMessage: null,
+      needUpdate: false,
+    };
+
+    return HttpResponse.json(successResponse);
+  }),
+
+  http.post('/api/auth/logout', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return HttpResponse.json({ result: true });
+  }),
+
   http.get('/api/users', () => {
     return HttpResponse.json({ data: mockData.users });
   }),
