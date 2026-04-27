@@ -1,6 +1,5 @@
 # React Frontend Template
 
-Hello world
 hello world
 
 A production-ready React template built with TypeScript, React Router, TanStack Query, and feature-based architecture.
