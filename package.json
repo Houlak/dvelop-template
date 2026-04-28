@@ -13,6 +13,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
+    "test:e2e:smoke": "env-cmd -e local playwright test e2e/smoke/branch-naming-flow.spec.ts",
     "test:e2e:local": "env-cmd -e local playwright test",
     "test:e2e:local:ui": "env-cmd -e local playwright test --ui",
     "test:e2e:local:headed": "env-cmd -e local playwright test --headed",
@@ -32,7 +33,10 @@
     "test:e2e:prod:ui": "env-cmd -e prod playwright test --ui",
     "test:e2e:prod:headed": "env-cmd -e prod playwright test --headed",
     "test:e2e:prod:debug": "env-cmd -e prod playwright test --debug",
-    "test:e2e:prod:report": "env-cmd -e prod playwright show-report"
+    "test:e2e:prod:report": "env-cmd -e prod playwright show-report",
+    "test:branch-naming": "node scripts/branch-naming-smoke-check.cjs",
+    "test:branch-naming:smoke": "node scripts/branch-naming-smoke-check.cjs --smoke --skip-current-branch",
+    "test:branch-naming:unit": "node --test scripts/branch-naming-rules.test.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",

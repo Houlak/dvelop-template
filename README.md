@@ -473,6 +473,30 @@ yarn build
 
 ---
 
+## 🌿 Branch Naming & Smoke Checks
+
+Branch naming conventions:
+
+- Long-lived branches: `main`, `develop`, `dev`, `qa`
+- Short-lived branches: `<type>/<kebab-case-description>`
+- Allowed `<type>` values: `feature`, `bugfix`, `hotfix`, `chore`, `release`
+- Examples: `feature/login-redirect`, `bugfix/auth-loop`, `release/2026-04-stabilization`
+
+Smoke checks:
+
+```bash
+# Validate current branch naming + CI/CD branch mapping
+yarn test:branch-naming
+
+# Run matrix of valid/invalid branch naming scenarios
+yarn test:branch-naming:smoke
+
+# Verify protected-route auth guard smoke coverage
+yarn test:e2e:smoke
+```
+
+---
+
 ## 📚 Tech Stack
 
 - **React 18** + **TypeScript**
@@ -494,6 +518,7 @@ yarn build
 6. **Use queries in components**: Reuse the same query options with `useQuery`
 7. **Define mutations in hooks**: Include default behaviors and invalidation logic
 8. **Customize in components**: Override `onSuccess`/`onError` for component-specific behavior
+9. Follow the branch naming convention and run `yarn test:branch-naming:smoke` before opening PRs
 
 ---
 

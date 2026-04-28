@@ -85,11 +85,17 @@ This repository provides a production-ready React 18 + TypeScript template cente
 6. **Testing**:
    - `yarn test:e2e` (default env),
    - Environment-specific variants (`yarn test:e2e:local`, `...:dev`, etc.) to align with remote configs,
-   - `yarn test:e2e:ui` for interactive debugging, `yarn test:e2e:report` to inspect the HTML report.
+   - `yarn test:e2e:ui` for interactive debugging, `yarn test:e2e:report` to inspect the HTML report,
+   - `yarn test:e2e:smoke` for branch-flow smoke coverage of login and protected routes.
 7. **CI/CD**:
    - `.github/workflows/e2e-tests.yml` runs Playwright on pushes/PRs to `main` and `develop`, uploading reports and screenshots on failure.
+   - `.github/workflows/branch-naming-smoke.yml` validates branch naming conventions and branch-to-pipeline mapping on pushes/PRs.
    - Example build workflow (`build-react-frontend-template.yml.example`) illustrates environment-specific builds.
-8. **Formatting & IDE support**: Prettier configuration (`printWidth: 110`, `singleQuote: true`); `.vscode/settings.json` enforces import organization and consistent formatting.
+8. **Branch naming**:
+   - Long-lived branches: `main`, `develop`, `dev`, `qa`.
+   - Short-lived format: `<type>/<kebab-case-description>` where `<type>` is one of `feature|bugfix|hotfix|chore|release`.
+   - Validate with `yarn test:branch-naming` and `yarn test:branch-naming:smoke`.
+9. **Formatting & IDE support**: Prettier configuration (`printWidth: 110`, `singleQuote: true`); `.vscode/settings.json` enforces import organization and consistent formatting.
 
 ## Important Constraints & Guidelines
 - **No barrel files**: Import directly from concrete files to avoid circular dependencies and improve tree-shaking.
@@ -101,6 +107,7 @@ This repository provides a production-ready React 18 + TypeScript template cente
 - **Styling consistency**: Reuse shared UI primitives (`Button`, `Card`, `Field`, etc.) and Tailwind tokens; avoid ad-hoc CSS unless extending the design system.
 - **State persistence**: `useAuthStore` persists to localStorage. Clearing auth should use `clearAuth()` to ensure storage + state stay in sync.
 - **Testing philosophy**: Co-locate component tests when added; prefer semantic selectors in Playwright (already showcased).
+- **Branch naming guardrail**: Keep branch names compatible with CI filters (`main`, `develop`) and Amplify build mapping (`main`, `qa`, `dev`).
 
 ## Deployment Notes
 - **AWS Amplify**: Build commands are environment-aware via `amplify.yml`; outputs deploy from the `dist/` directory. Ensure corresponding env vars exist in Amplify.

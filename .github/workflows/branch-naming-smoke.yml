@@ -1,0 +1,70 @@
+name: Branch Naming Smoke
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - develop
+      - dev
+      - qa
+  workflow_dispatch:
+
+jobs:
+  branch-naming:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate current branch naming
+        run: node scripts/branch-naming-smoke-check.cjs
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+      - name: Run branch naming smoke matrix
+        run: node scripts/branch-naming-smoke-check.cjs --smoke --skip-current-branch
+
+      - name: Run branch naming unit checks
+        run: node --test scripts/branch-naming-rules.test.cjs
+
+  protected-route-smoke:
+    if: github.event_name == 'pull_request'
+    needs: branch-naming
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run protected-route smoke test
+        run: yarn test:e2e:smoke
+        env:
+          CI: true
+
+      - name: Upload smoke test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-flow-smoke-playwright-report
+          path: playwright-report/
+          retention-days: 14
